@@ -55,4 +55,34 @@ public class Tile {
 	public void setPlayer() {
 		type = 'o';
 	}
+	
+	public boolean isAir() {
+		return type == ' ';
+	}
+	
+	public boolean isGround() {
+		return type == '#';
+	}
+	
+	public boolean isFinish() {
+		return type == '*';
+	}
+	
+	public boolean isBox() {
+		return type == 'B';
+	}
+	
+	public boolean isWater() {
+		return type == '=';
+	}
+	
+	public boolean isPlayer() {
+		return type == 'o';
+	}
+	
+	
+	public boolean isCollisionBlock() {
+		return isGround() || isBox();
+	}
+
 }
