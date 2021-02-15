@@ -32,6 +32,16 @@ public class Tile {
 		return type;
 	}
 	
+	// Method to set tile type if we dont know what type is. Used when importing board from saved file
+	public void setType(char type) {
+		if (isValidType(type)) {
+			this.type = type;
+		}
+		else {
+			throw new IllegalArgumentException("Type does not exist.");
+		}
+	}
+	
 	public void setAir() {
 		type = ' ';
 	}
@@ -83,6 +93,17 @@ public class Tile {
 	
 	public boolean isCollisionBlock() {
 		return isGround() || isBox();
+	}
+	
+	private boolean isValidType(char type) {
+		char[] validTypes = {' ', '*', 'B', '=', 'o'};
+		boolean contains = false;
+		for (char t: validTypes) {
+			if (t == type) {
+				contains = true;
+			}
+		}
+		return contains;
 	}
 
 }
