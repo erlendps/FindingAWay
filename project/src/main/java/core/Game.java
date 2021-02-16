@@ -3,12 +3,20 @@ package core;
 public class Game {
 	private int height;
 	private int width;
-	private int[][] board;
+	private Tile[][] board;
 	
 	public Game(int height, int width) {
 		if (isStrictlyPositiveInt(height) && isStrictlyPositiveInt(width)) {
 			this.height = height;
 			this.width = width;
+			
+			this.board = new Tile[height][width];
+			
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					board[y][x] = new Tile(x, y);
+				}
+			}
 		}
 		else {
 			throw new IllegalArgumentException("Height and width must be strictly positive numbers");
