@@ -1,4 +1,7 @@
 package core;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Tile {
 	private int x;
@@ -32,52 +35,62 @@ public class Tile {
 		return type;
 	}
 	
+	public void setType(char type) {
+		List<Character> validTypes = new ArrayList<>(Arrays.asList(' ', '#', '*', 'B', '=', 'o'));
+		if (validTypes.contains(type)) {
+			this.type = type;
+		}
+		else {
+			throw new IllegalArgumentException("Invalid type");
+		}
+	}
+	
 	public void setAir() {
-		type = ' ';
+		setType(' ');
 	}
 	
 	public void setGround() {
-		type = '#';
+		setType('#');
 	}
 	
 	public void setFinish() {
-		type = '*';
+		setType('*');
 	}
 	
 	public void setBox() {
-		type = 'B';
+		setType('B');
 	}
 	
 	public void setWater() {
-		type = '=';
+		setType('=');
 	}
 	
 	public void setPlayer() {
-		type = 'o';
+		setType('o');
 	}
 	
 	public boolean isAir() {
-		return type == ' ';
+		return getType() == ' ';
 	}
 	
 	public boolean isGround() {
-		return type == '#';
+		return getType() == '#';
 	}
 	
 	public boolean isFinish() {
-		return type == '*';
+		return getType() == '*';
 	}
 	
 	public boolean isBox() {
-		return type == 'B';
+		return getType() == 'B';
 	}
 	
 	public boolean isWater() {
-		return type == '=';
+		return getType() == '=';
 	}
 	
 	public boolean isPlayer() {
-		return type == 'o';
+		return getType() == 'o';
 	}
 	
 	
