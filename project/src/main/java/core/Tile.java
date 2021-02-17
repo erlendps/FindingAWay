@@ -15,9 +15,14 @@ public class Tile {
 	 */
 	
 	public Tile(int x, int y) {
-		this.x = x;
-		this.y = y;
-		this.type = ' ';
+		if (x > 0 && y > 0) {
+			this.x = x;
+			this.y = y;
+			this.type = ' ';
+		}
+		else {
+			throw new IllegalArgumentException("X and Y coordinates must be strictly positive.");
+		}
 	}
 	
 	public int getX() {
@@ -32,7 +37,7 @@ public class Tile {
 		return type;
 	}
 	
-	// Method to set tile type if we dont know what type is. Used when importing board from saved file
+	// Method to set tile type if we dont know what type is
 	public void setType(char type) {
 		if (isValidType(type)) {
 			this.type = type;
@@ -43,51 +48,51 @@ public class Tile {
 	}
 	
 	public void setAir() {
-		type = ' ';
+		setType(' ');
 	}
 	
 	public void setGround() {
-		type = '#';
+		setType('#');
 	}
 	
 	public void setFinish() {
-		type = '*';
+		setType('*');
 	}
 	
 	public void setBox() {
-		type = 'B';
+		setType('B');
 	}
 	
 	public void setWater() {
-		type = '=';
+		setType('=');
 	}
 	
 	public void setPlayer() {
-		type = 'o';
+		setType('o');
 	}
 	
 	public boolean isAir() {
-		return type == ' ';
+		return getType() == ' ';
 	}
 	
 	public boolean isGround() {
-		return type == '#';
+		return getType() == '#';
 	}
 	
 	public boolean isFinish() {
-		return type == '*';
+		return getType() == '*';
 	}
 	
 	public boolean isBox() {
-		return type == 'B';
+		return getType() == 'B';
 	}
 	
 	public boolean isWater() {
-		return type == '=';
+		return getType() == '=';
 	}
 	
 	public boolean isPlayer() {
-		return type == 'o';
+		return getType() == 'o';
 	}
 	
 	
@@ -101,6 +106,7 @@ public class Tile {
 		for (char t: validTypes) {
 			if (t == type) {
 				contains = true;
+				break;
 			}
 		}
 		return contains;
