@@ -41,8 +41,33 @@ public class Game {
 		return width;
 	}
 	
+	public Tile getTile(int x, int y) {
+		if (isTile(x, y)) {
+			return board[y][x];
+		}
+		else {
+			throw new IllegalArgumentException("Tile does not exist");
+		}
+	}
+	
+	private boolean isTile(int x, int y) {
+		return isStrictlyPositiveInt(x) && x < width && isStrictlyPositiveInt(y) && y < height;
+	}
+	
 	private boolean checkIfTile(int x, int y) {
 		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
+	}
+	
+	@Override
+	public String toString() {
+		String out = "";
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
+				out += getTile(x, y);
+			}
+			out += "\n";
+		}
+		return out;
 	}
 }
 
