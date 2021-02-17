@@ -115,5 +115,10 @@ public class Tile {
 		}
 		return contains;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s" ,getType());
+	}
 
 }
