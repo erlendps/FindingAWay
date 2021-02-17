@@ -7,11 +7,11 @@ public class Game {
 	private int height;
 	private int width;
 	private Tile[][] board;
-	private List<Player> playerModel;
+	private List<Tile> playerModel;
 
 	
 	public Game(int height, int width) {
-		if (isStrictlyPositiveInt(height) && isStrictlyPositiveInt(width)) {
+		if (width > 0 && width > 0) {
 			this.height = height;
 			this.width = width;
 
@@ -27,10 +27,6 @@ public class Game {
 		else {
 			throw new IllegalArgumentException("Height and width must be strictly positive numbers");
 		}
-	}
-	
-	private boolean isStrictlyPositiveInt(int number) {
-		return number > 0;
 	}
 	
 	public int getHeight() {
@@ -51,7 +47,7 @@ public class Game {
 	}
 	
 	private boolean isTile(int x, int y) {
-		return isStrictlyPositiveInt(x) && x < width && isStrictlyPositiveInt(y) && y < height;
+		return x >= 0 && x < width && y >= 0 && y < height;
 	}
 	
 	private boolean checkIfTile(int x, int y) {
