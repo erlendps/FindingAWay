@@ -18,9 +18,14 @@ public class Tile {
 	 */
 	
 	public Tile(int x, int y) {
-		this.x = x;
-		this.y = y;
-		this.type = ' ';
+		if (x > 0 && y > 0) {
+			this.x = x;
+			this.y = y;
+			this.type = ' ';
+		}
+		else {
+			throw new IllegalArgumentException("X and Y coordinates must be strictly positive.");
+		}
 	}
 	
 	public int getX() {
@@ -35,13 +40,14 @@ public class Tile {
 		return type;
 	}
 	
+
+	// Method to set tile type if we dont know what type is
 	public void setType(char type) {
-		List<Character> validTypes = new ArrayList<>(Arrays.asList(' ', '#', '*', 'B', '=', 'o'));
-		if (validTypes.contains(type)) {
+		if (isValidType(type)) {
 			this.type = type;
 		}
 		else {
-			throw new IllegalArgumentException("Invalid type");
+			throw new IllegalArgumentException("Type does not exist.");
 		}
 	}
 	
@@ -96,6 +102,18 @@ public class Tile {
 	
 	public boolean isCollisionBlock() {
 		return isGround() || isBox();
+	}
+	
+	private boolean isValidType(char type) {
+		char[] validTypes = {' ', '*', 'B', '=', 'o'};
+		boolean contains = false;
+		for (char t: validTypes) {
+			if (t == type) {
+				contains = true;
+				break;
+			}
+		}
+		return contains;
 	}
 
 }
