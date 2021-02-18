@@ -38,7 +38,7 @@ public class Game {
 	}
 	
 	public Tile getTile(int x, int y) {
-		if (isTile(x, y)) {
+		if (checkIfTile(x, y)) {
 			return board[y][x];
 		}
 		else {
@@ -46,9 +46,6 @@ public class Game {
 		}
 	}
 	
-	private boolean isTile(int x, int y) {
-		return x >= 0 && x < width && y >= 0 && y < height;
-	}
 	
 	private boolean checkIfTile(int x, int y) {
 		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
