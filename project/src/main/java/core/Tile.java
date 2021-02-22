@@ -14,17 +14,17 @@ public class Tile {
 	 * '*' = goal/finish
 	 * 'B' = boxes (moveable)
 	 * '=' = water
-	 * 'o' = player head
+	 * 'o' = player 
 	 */
 	
 	public Tile(int x, int y) {
-		if (x > 0 && y > 0) {
+		if (x >= 0 && y >= 0) {
 			this.x = x;
 			this.y = y;
 			this.type = ' ';
 		}
 		else {
-			throw new IllegalArgumentException("X and Y coordinates must be strictly positive.");
+			throw new IllegalArgumentException("X and Y coordinates must be positive.");
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class Tile {
 
 	// Method to set tile type if we dont know what type is
 	public void setType(char type) {
-		if (isValidType(type)) {
+		if (isValidType(type) && !isGround()) {
 			this.type = type;
 		}
 		else {
@@ -105,7 +105,7 @@ public class Tile {
 	}
 	
 	private boolean isValidType(char type) {
-		char[] validTypes = {' ', '*', 'B', '=', 'o'};
+		char[] validTypes = {' ', '#', '*', 'B', '=', 'o'};
 		boolean contains = false;
 		for (char t: validTypes) {
 			if (t == type) {
