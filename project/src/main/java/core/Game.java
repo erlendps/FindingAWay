@@ -1,7 +1,6 @@
 package core;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.Math;
 
 public class Game {
 	private int height;
@@ -141,10 +140,6 @@ public class Game {
 		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
 	}
 	
-	private boolean isTile(Tile tile) {
-		return isTile(tile.getX(), tile.getY());
-	}
-	
 	public void swapBoxSide() {
 		if (!boxPickedUp)
 			throw new IllegalStateException("No box to swap side with.");
@@ -160,38 +155,113 @@ public class Game {
 		playerModel.get(2).setBox();
 		}
 	
-	private boolean isValidMove(int dx) {
+	private int checkIfValidMove(int dx) {
 		List<Tile> targets = new ArrayList<>();
 		
 		for (Tile tile: playerModel) {
 			int targetX = tile.getX() + dx;
 			int targetY = tile.getY();
 			if (!isTile(targetX, targetY))
-				return false;
+				return 0;
 			Tile targetTile = getTile(targetX, targetY);
 			targets.add(targetTile);
 		}
 		if (targets.get(0).isCollisionBlock()) {
-			if (!getTile(targets.get(0).getX(), targets.get(0).getY() - 1).isCollisionBlock()) {
+			if (!getTile(targets.get(0).getX(), targets.get(0).getY() - 1).isCollisionBlock()
+				|| 
+				getTile(targets.get(0).getX(), targets.get(0).getY() - 1) == playerModel.get(playerModel.size() - 1)) {
 				// checks if the tile above is a collision block: if it isnt, it indicates a stair
 				for (int i = 0; i < targets.size(); i++) {
 					targets.set(i, getTile(targets.get(i).getX(), targets.get(i).getY() - 1));
-					// it then shifts all target-tiles 1 tile up.
-				}
-			} else return false;
+				} // it then shifts all target-tiles 1 tile up.
+					
+				for (Tile tile: targets) {
+					if (tile.isCollisionBlock() && tile != playerModel.get(playerModel.size()-1))
+						return 0;}
+				return 2;
+				
+			} else return 0;
 		}
 		
 		for (Tile tile: targets) {
 			if (tile.isCollisionBlock() && tile != playerModel.get(playerModel.size()-1))
-				return false;}
+				return 0;}
 		
-		return true;
+		return 1;
 	}
 	
 	private void move(int dx) {
-		if (!isValidMove(dx))
+		if (isWon || isGameOver)
+			throw new IllegalStateException("Game finished");
+		int controller = checkIfValidMove(dx);
+		if (controller == 0)
 			throw new IllegalStateException("Making this move would put the game"
 					+ " in an illegal state.");
+		else if (controller == 1) {
+			List<Tile> newPlayerModel = new ArrayList<>();
+			for (Tile tile: playerModel) {
+				newPlayerModel.add(getTile(tile.getX() + dx, tile.getY()));
+				tile.setAir();
+			}
+			
+			for (Tile tile: newPlayerModel.subList(0, 2)) {
+				if (tile.isFinish())
+					isWon = true;}
+			
+			for (int i = 0; i < newPlayerModel.size(); i++) {
+				if (i == 2)
+					newPlayerModel.get(i).setBox();
+				else
+					newPlayerModel.get(i).setPlayer();
+			}
+			playerModel = newPlayerModel;
+			
+			while (playerInAir()) {
+				Tile playerBody = playerModel.get(0);
+				
+				if (!isTile(playerBody.getX(), playerBody.getY() + 1)) {
+					isGameOver = true;
+				}
+				for (Tile tile: playerModel) {
+					tile.setAir();
+				}
+				List<Tile> newPlayer = new ArrayList<>();
+				for (Tile tile: playerModel) {
+					Tile targetTile = getTile(tile.getX(), tile.getY() + 1);
+					try { 
+						if (tile == playerModel.get(2))
+							targetTile.setBox();
+						else
+							targetTile.setPlayer();
+					} catch (Exception e) {
+						targetTile.setPlayer();
+					}
+					newPlayer.add(targetTile);
+				}
+				playerModel = newPlayer;
+			}
+		}
+		else {
+			for (Tile tile: playerModel) {
+				tile.setAir();
+			}
+			List<Tile> newPlayerModel = new ArrayList<>();
+			for (Tile tile: playerModel) {
+				Tile targetTile = getTile(tile.getX() + dx, tile.getY() - 1);
+				if (targetTile.isFinish())
+					isWon = true;
+				try { 
+					if (tile == playerModel.get(2))
+						targetTile.setBox();
+					else
+						targetTile.setPlayer();
+				} catch (Exception e) {
+					targetTile.setPlayer();
+				}
+				newPlayerModel.add(targetTile);
+			}
+			playerModel = newPlayerModel;
+		}
 		
 	}
 	
@@ -207,6 +277,11 @@ public class Game {
 			}
 			out += "\n";
 		}
+		if (isGameOver)
+			out += "\n\nGame Over";
+		else if (isWon)
+			out += "\n\nGame won";
+		
 		return out;
 	}
 	
@@ -240,7 +315,28 @@ public class Game {
 		System.out.println(game);
 		game.swapBoxSide();
 		System.out.println(game);
+		game.moveRight();
+		System.out.println(game);
+		game.moveRight();
+		System.out.println(game);
+		game.moveRight();
+		game.swapBoxSide();
+		System.out.println(game);
 		game.interactWithBox();
+		System.out.println(game);
+		game.moveRight();
+		game.interactWithBox();
+		System.out.println(game);
+		game.moveLeft();
+		game.swapBoxSide();
+		System.out.println(game);
+		game.interactWithBox();
+		System.out.println(game);
+		game.moveLeft();
+		game.moveLeft();
+		System.out.println(game);
+		game.moveLeft();
+		game.moveLeft();
 		System.out.println(game);
 	}
 }
