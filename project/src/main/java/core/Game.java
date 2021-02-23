@@ -115,8 +115,7 @@ public class Game {
 	}
 	
 	private Tile getBoxTileNearPlayer() {
-
-		for (Tile tile: playerModel.subList(0, 2)) {
+		for (Tile tile: playerModel.subList(0, playerModel.size() - 1)) {
 			try {
 				if (getTile(tile.getX()-1, tile.getY()).isBox()) 
 					return getTile(tile.getX()-1, tile.getY());
@@ -141,6 +140,10 @@ public class Game {
 		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
 	}
 	
+	private void move(int dx) {
+		
+	}
+	
 	@Override
 	public String toString() {
 		String out = "";
@@ -151,6 +154,14 @@ public class Game {
 			out += "\n";
 		}
 		return out;
+	}
+	
+	public void moveLeft() {
+		move(-1);
+	}
+	
+	public void moveRight() {
+		move(1);
 	}
 	
 	public static void main(String[] args) {
