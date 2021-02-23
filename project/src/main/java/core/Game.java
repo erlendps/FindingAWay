@@ -1,6 +1,7 @@
 package core;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Math;
 
 public class Game {
 	private int height;
@@ -37,8 +38,8 @@ public class Game {
 				getTile(x,y).setPlayer();
 				getTile(x,y-1).setPlayer();
 				playerModel = new ArrayList<>();
-				playerModel.add(0, getTile(x, y-1));
-				playerModel.add(1, getTile(x, y));
+				playerModel.add(0, getTile(x, y));   // player body
+				playerModel.add(1, getTile(x, y-1)); // player head
 			}
 			else
 				throw new IllegalStateException("Invalid placement of player model");
@@ -63,7 +64,7 @@ public class Game {
 	}
 	
 	public Tile getTile(int x, int y) {
-		if (checkIfTile(x, y)) {
+		if (isTile(x, y)) {
 			return board[y][x];
 		}
 		else {
@@ -75,7 +76,7 @@ public class Game {
 		Tile boxTile = getBoxTileNearPlayer();
 		if (!boxTile.isAir())
 			if (!boxPickedUp) {
-				int dy = boxTile.getY() - playerModel.get(0).getY();
+				int dy = boxTile.getY() - playerModel.get(1).getY();
 				int targetY = boxTile.getY() - dy;
 				boxTile.setAir();
 				getTile(boxTile.getX(), targetY).setBox();
@@ -85,7 +86,7 @@ public class Game {
 			else {
 				playerModel.remove(2);
 				while (boxInAir(boxTile)) {
-					if (!checkIfTile(boxTile.getX(), boxTile.getY() + 1))
+					if (!isTile(boxTile.getX(), boxTile.getY() + 1))
 						isGameOver = true;
 					if (isGameOver)
 						break;
@@ -101,21 +102,21 @@ public class Game {
 	
 	private boolean boxInAir(Tile box) {
 		if (getTile(box.getX(), box.getY() + 1).isAir()
-			&& checkIfTile(box.getX(), box.getY() + 1))
+			&& isTile(box.getX(), box.getY() + 1))
 			return true;
 		else return false;
 	}
 	
 	private boolean playerInAir() {
-		Tile playerBody = playerModel.get(1);
+		Tile playerBody = playerModel.get(0);
 		if (getTile(playerBody.getX(), playerBody.getY() + 1).isAir() 
-			&& checkIfTile(playerBody.getX(), playerBody.getY() + 1))
+			&& isTile(playerBody.getX(), playerBody.getY() + 1))
 			return true;
 		else return false;
 	}
 	
 	private Tile getBoxTileNearPlayer() {
-		for (Tile tile: playerModel.subList(0, playerModel.size() - 1)) {
+		for (Tile tile: playerModel.subList(0, playerModel.size())) {
 			try {
 				if (getTile(tile.getX()-1, tile.getY()).isBox()) 
 					return getTile(tile.getX()-1, tile.getY());
@@ -136,11 +137,61 @@ public class Game {
 		return new Tile(0,0);
 	}
 	
-	private boolean checkIfTile(int x, int y) {
+	private boolean isTile(int x, int y) {
 		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
 	}
 	
+	private boolean isTile(Tile tile) {
+		return isTile(tile.getX(), tile.getY());
+	}
+	
+	public void swapBoxSide() {
+		if (!boxPickedUp)
+			throw new IllegalStateException("No box to swap side with.");
+		
+		int dx = playerModel.get(2).getX() - playerModel.get(1).getX();
+		int targetX = playerModel.get(1).getX() - dx;
+		int targetY = playerModel.get(1).getY();
+		if (!isTile(targetX, targetY) || !getTile(targetX, targetY).isAir())
+			throw new IllegalStateException("Cant swap to this tile.");
+		
+		playerModel.get(2).setAir();
+		playerModel.set(2, getTile(targetX, targetY));
+		playerModel.get(2).setBox();
+		}
+	
+	private boolean isValidMove(int dx) {
+		List<Tile> targets = new ArrayList<>();
+		
+		for (Tile tile: playerModel) {
+			int targetX = tile.getX() + dx;
+			int targetY = tile.getY();
+			if (!isTile(targetX, targetY))
+				return false;
+			Tile targetTile = getTile(targetX, targetY);
+			targets.add(targetTile);
+		}
+		if (targets.get(0).isCollisionBlock()) {
+			if (!getTile(targets.get(0).getX(), targets.get(0).getY() - 1).isCollisionBlock()) {
+				// checks if the tile above is a collision block: if it isnt, it indicates a stair
+				for (int i = 0; i < targets.size(); i++) {
+					targets.set(i, getTile(targets.get(i).getX(), targets.get(i).getY() - 1));
+					// it then shifts all target-tiles 1 tile up.
+				}
+			} else return false;
+		}
+		
+		for (Tile tile: targets) {
+			if (tile.isCollisionBlock() && tile != playerModel.get(playerModel.size()-1))
+				return false;}
+		
+		return true;
+	}
+	
 	private void move(int dx) {
+		if (!isValidMove(dx))
+			throw new IllegalStateException("Making this move would put the game"
+					+ " in an illegal state.");
 		
 	}
 	
@@ -149,7 +200,10 @@ public class Game {
 		String out = "";
 		for (int y = 0; y < getHeight(); y++) {
 			for (int x = 0; x < getWidth(); x++) {
-				out += getTile(x, y);
+				if (getTile(x, y) == playerModel.get(1))
+					out += 'p';
+				else
+					out += getTile(x, y);
 			}
 			out += "\n";
 		}
@@ -183,6 +237,8 @@ public class Game {
 		game.addPlayer(2, 6);
 		System.out.println(game);
 		game.interactWithBox();
+		System.out.println(game);
+		game.swapBoxSide();
 		System.out.println(game);
 		game.interactWithBox();
 		System.out.println(game);
