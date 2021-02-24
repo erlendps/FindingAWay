@@ -288,12 +288,20 @@ public class Game {
 			}
 			out += "\n";
 		}
-		if (isGameOver)
+		if (isGameOver())
 			out += "\n\nGame Over";
-		else if (isWon)
+		else if (isWon())
 			out += "\n\nGame won";
 		
 		return out;
+	}
+	
+	private boolean isGameOver() {
+		return isGameOver;
+	}
+	
+	private boolean isWon() {
+		return isWon;
 	}
 	
 
