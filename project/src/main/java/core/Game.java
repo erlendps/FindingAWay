@@ -296,23 +296,23 @@ public class Game {
 		return out;
 	}
 	
-	private boolean isGameOver() {
+	public boolean isGameOver() {
 		return isGameOver;
 	}
 	
-	private boolean isWon() {
+	public boolean isWon() {
 		return isWon;
 	}
 	
-	private Tile getPlayerHead() {
+	public Tile getPlayerHead() {
 		return playerModel.get(1);
 	}
 	
-	private Tile getPlayerBody() {
+	public Tile getPlayerBody() {
 		return playerModel.get(0);
 	}
 	
-	private Tile getPlayerBox() {
+	public Tile getPlayerBox() {
 		return playerModel.get(2);
 	}
 	
