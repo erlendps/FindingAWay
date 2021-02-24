@@ -47,13 +47,6 @@ public class Game {
 			throw new IllegalStateException("Already player on board.");
 	}
 	
-//	public void addBox(int x, int y) {
-//		if (!getTile(x,y).isAir()) {
-//			throw new IllegalStateException("Illegal placement of box");
-//		}
-//		getTile(x,y).setBox();
-//	}
-	
 	public int getHeight() {
 		return height;
 	}
