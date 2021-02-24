@@ -31,6 +31,7 @@ public class Game {
 		}
 	}
 	
+	
 	public void addPlayer(int x, int y) {
 		if (playerModel == null) {
 			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()) {
@@ -46,6 +47,7 @@ public class Game {
 		else
 			throw new IllegalStateException("Already player on board.");
 	}
+	
 	
 	public int getHeight() {
 		return height;
@@ -63,6 +65,7 @@ public class Game {
 			throw new IllegalArgumentException("Tile does not exist");
 		}
 	}
+	
 	
 	public void interactWithBox() {
 		Tile boxTile = getBoxTileNearPlayer();
@@ -92,12 +95,14 @@ public class Game {
 			throw new IllegalStateException("No box near the player.");
 	}
 	
+	
 	private boolean boxInAir(Tile box) {
 		if (getTile(box.getX(), box.getY() + 1).isAir()
 			&& isTile(box.getX(), box.getY() + 1))
 			return true;
 		else return false;
 	}
+	
 	
 	private boolean playerInAir() {
 		Tile playerBody = playerModel.get(0);
@@ -106,6 +111,7 @@ public class Game {
 			return true;
 		else return false;
 	}
+	
 	
 	private Tile getBoxTileNearPlayer() {
 		for (Tile tile: playerModel.subList(0, playerModel.size())) {
@@ -129,9 +135,6 @@ public class Game {
 		return new Tile(0,0);
 	}
 	
-	private boolean isTile(int x, int y) {
-		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
-	}
 	
 	public void swapBoxSide() {
 		if (!boxPickedUp)
@@ -147,6 +150,7 @@ public class Game {
 		playerModel.set(2, getTile(targetX, targetY));
 		playerModel.get(2).setBox();
 		}
+	
 	
 	private int checkIfValidMove(int dx) {
 		List<Tile> targets = new ArrayList<>();
@@ -182,6 +186,7 @@ public class Game {
 		
 		return 1;
 	}
+	
 	
 	private void move(int dx) {
 		if (isWon || isGameOver)
@@ -255,8 +260,21 @@ public class Game {
 			}
 			playerModel = newPlayerModel;
 		}
-		
 	}
+	
+	
+	private boolean isTile(int x, int y) {
+		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
+	}
+	
+	public void moveLeft() {
+		move(-1);
+	}
+	
+	public void moveRight() {
+		move(1);
+	}
+	
 	
 	@Override
 	public String toString() {
@@ -278,14 +296,7 @@ public class Game {
 		return out;
 	}
 	
-	public void moveLeft() {
-		move(-1);
-	}
-	
-	public void moveRight() {
-		move(1);
-	}
-	
+
 	public static void main(String[] args) {
 		Game game = new Game(8, 10);
 		game.getTile(1, 1).setFinish();
