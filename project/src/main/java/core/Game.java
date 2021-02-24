@@ -105,7 +105,7 @@ public class Game {
 	
 	
 	private boolean playerInAir() {
-		Tile playerBody = playerModel.get(0);
+		Tile playerBody = getPlayerBody();
 		if (getTile(playerBody.getX(), playerBody.getY() + 1).isAir() 
 			&& isTile(playerBody.getX(), playerBody.getY() + 1))
 			return true;
@@ -140,15 +140,15 @@ public class Game {
 		if (!boxPickedUp)
 			throw new IllegalStateException("No box to swap side with.");
 		
-		int dx = playerModel.get(2).getX() - playerModel.get(1).getX();
-		int targetX = playerModel.get(1).getX() - dx;
-		int targetY = playerModel.get(1).getY();
+		int dx = getPlayerBox().getX() - getPlayerHead().getX();
+		int targetX = getPlayerHead().getX() - dx;
+		int targetY = getPlayerHead().getY();
 		if (!isTile(targetX, targetY) || !getTile(targetX, targetY).isAir())
 			throw new IllegalStateException("Cant swap to this tile.");
 		
-		playerModel.get(2).setAir();
+		getPlayerBox().setAir();
 		playerModel.set(2, getTile(targetX, targetY));
-		playerModel.get(2).setBox();
+		getPlayerBox().setBox();
 		}
 	
 	
@@ -215,7 +215,7 @@ public class Game {
 			playerModel = newPlayerModel;
 			
 			while (playerInAir()) {
-				Tile playerBody = playerModel.get(0);
+				Tile playerBody = getPlayerBody();
 				
 				if (!isTile(playerBody.getX(), playerBody.getY() + 1)) {
 					isGameOver = true;
@@ -227,7 +227,7 @@ public class Game {
 				for (Tile tile: playerModel) {
 					Tile targetTile = getTile(tile.getX(), tile.getY() + 1);
 					try { 
-						if (tile == playerModel.get(2))
+						if (tile == getPlayerBox())
 							targetTile.setBox();
 						else
 							targetTile.setPlayer();
@@ -249,7 +249,7 @@ public class Game {
 				if (targetTile.isFinish())
 					isWon = true;
 				try { 
-					if (tile == playerModel.get(2))
+					if (tile == getPlayerBox())
 						targetTile.setBox();
 					else
 						targetTile.setPlayer();
@@ -281,7 +281,7 @@ public class Game {
 		String out = "";
 		for (int y = 0; y < getHeight(); y++) {
 			for (int x = 0; x < getWidth(); x++) {
-				if (getTile(x, y) == playerModel.get(1))
+				if (getTile(x, y) == getPlayerHead())
 					out += 'p';
 				else
 					out += getTile(x, y);
@@ -302,6 +302,18 @@ public class Game {
 	
 	private boolean isWon() {
 		return isWon;
+	}
+	
+	private Tile getPlayerHead() {
+		return playerModel.get(1);
+	}
+	
+	private Tile getPlayerBody() {
+		return playerModel.get(0);
+	}
+	
+	private Tile getPlayerBox() {
+		return playerModel.get(2);
 	}
 	
 
