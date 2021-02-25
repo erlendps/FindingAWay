@@ -88,8 +88,8 @@ public class Game {
 					boxTile.setAir();
 					boxTile = getTile(boxTile.getX(), boxTile.getY() + 1);
 					boxTile.setBox();
-					boxPickedUp = false;
 				}
+				boxPickedUp = false;
 			}
 		else
 			throw new IllegalStateException("No box near the player.");
@@ -314,6 +314,10 @@ public class Game {
 	
 	public Tile getPlayerBox() {
 		return playerModel.get(2);
+	}
+	
+	public boolean checkIfBoxPickedUp() {
+		return boxPickedUp;
 	}
 	
 
