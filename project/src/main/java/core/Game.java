@@ -230,12 +230,6 @@ public class Game {
 			playerModel = newPlayerModel;
 			
 			while (playerInAir()) {
-				Tile playerBody = getPlayerBody();
-				
-//				if (!isTile(playerBody.getX(), playerBody.getY() + 1)) {
-//					isGameOver = true;
-//					break;
-//				}
 				for (Tile tile: playerModel) {
 					tile.setAir();
 				}
@@ -334,6 +328,10 @@ public class Game {
 	
 	public boolean checkIfBoxPickedUp() {
 		return boxPickedUp;
+	}
+	
+	public List<Tile> getPlayerModel() {
+		return playerModel;
 	}
 	
 

@@ -50,11 +50,12 @@
             <Pane prefHeight="140.0" prefWidth="420.0" GridPane.rowIndex="2">
                <children>
                   <Button layoutX="148.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleMoveLeft" prefHeight="50.0" prefWidth="60.0" text="Left" />
-                  <Button layoutX="346.0" layoutY="94.0" mnemonicParsing="false" prefWidth="60.0" text="Reset" />
-                  <ChoiceBox fx:id="choiceBox" layoutX="14.0" layoutY="14.0" prefHeight="27.0" prefWidth="102.0" />
+                  <Button layoutX="346.0" layoutY="94.0" mnemonicParsing="false" onAction="#handleReset" prefWidth="60.0" text="Reset" />
+                  <ChoiceBox fx:id="choiceBox" layoutX="14.0" layoutY="14.0" prefHeight="27.0" prefWidth="102.0" value="Level 1" />
                   <Button layoutX="223.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleMoveRight" prefHeight="50.0" prefWidth="60.0" text="Right" />
                   <Button layoutX="223.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSwap" prefWidth="60.0" text="Swap" />
                   <Button fx:id="boxInteractor" layoutX="148.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleInteractWithBox" prefWidth="60.0" text="Pick Up" />
+                  <Button layoutX="38.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleGetSelection" text="Confirm" />
                </children>
             </Pane>
          </children>
