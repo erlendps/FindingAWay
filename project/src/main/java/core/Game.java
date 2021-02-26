@@ -1,5 +1,7 @@
 package core;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Game {
@@ -69,9 +71,9 @@ public class Game {
 	
 	public void interactWithBox() {
 		Tile boxTile = getBoxTileNearPlayer();
-		if (!boxTile.isAir())
+		if (boxTile != null)
 			if (!boxPickedUp) {
-				int dy = boxTile.getY() - playerModel.get(1).getY();
+				int dy = boxTile.getY() - getPlayerHead().getY();
 				int targetY = boxTile.getY() - dy;
 				boxTile.setAir();
 				getTile(boxTile.getX(), targetY).setBox();
@@ -106,15 +108,28 @@ public class Game {
 	
 	private boolean playerInAir() {
 		Tile playerBody = getPlayerBody();
-		if (getTile(playerBody.getX(), playerBody.getY() + 1).isAir() 
-			&& isTile(playerBody.getX(), playerBody.getY() + 1))
-			return true;
-		else return false;
+		if (isTile(playerBody.getX(), playerBody.getY() + 1)) {
+			if (getTile(playerBody.getX(), playerBody.getY() + 1).isAir())
+				return true;
+			else
+				return false;
+		}
+			
+		else {
+			isGameOver = true;
+			return false;
+		}
 	}
 	
 	
 	private Tile getBoxTileNearPlayer() {
-		for (Tile tile: playerModel.subList(0, playerModel.size())) {
+		List<Tile> iteratorList = new ArrayList<>();
+		iteratorList.addAll(playerModel);
+		Collections.reverse(iteratorList);
+		
+		for (Tile tile: iteratorList.subList(0, 2)) {
+			if (tile.isBox())
+				return tile;
 			try {
 				if (getTile(tile.getX()-1, tile.getY()).isBox()) 
 					return getTile(tile.getX()-1, tile.getY());
@@ -132,7 +147,7 @@ public class Game {
 				}
 			}
 		}
-		return new Tile(0,0);
+		return null; //new Tile(0,0);
 	}
 	
 	
@@ -217,9 +232,10 @@ public class Game {
 			while (playerInAir()) {
 				Tile playerBody = getPlayerBody();
 				
-				if (!isTile(playerBody.getX(), playerBody.getY() + 1)) {
-					isGameOver = true;
-				}
+//				if (!isTile(playerBody.getX(), playerBody.getY() + 1)) {
+//					isGameOver = true;
+//					break;
+//				}
 				for (Tile tile: playerModel) {
 					tile.setAir();
 				}
