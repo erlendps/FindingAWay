@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class Game {
+public class FindingAWay {
 	private int height;
 	private int width;
 	private Tile[][] board;
@@ -14,7 +14,7 @@ public class Game {
 	private boolean boxPickedUp = false;
 
 	
-	public Game(int height, int width) {
+	public FindingAWay(int height, int width) {
 		if (width > 0 && width > 0) {
 			this.height = height;
 			this.width = width;
@@ -336,7 +336,7 @@ public class Game {
 	
 
 	public static void main(String[] args) {
-		Game game = new Game(8, 10);
+		FindingAWay game = new FindingAWay(8, 10);
 		game.getTile(1, 1).setFinish();
 		game.getTile(1, 3).setGround();
 		game.getTile(2, 3).setGround();

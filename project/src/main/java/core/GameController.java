@@ -14,7 +14,7 @@ public class GameController {
 	
 	private int level;
 	
-	Game game;
+	FindingAWay game;
 	
 	@FXML
 	Pane board;
@@ -48,7 +48,7 @@ public class GameController {
 	
 	
 	private void initLevelOne() {
-		game = new Game(12, 14);
+		game = new FindingAWay(12, 14);
 		for (int y = 7; y < game.getHeight(); y++) {
 			for (int x = 2; x < 13; x++) {
 				game.getTile(x, y).setGround();}}
@@ -70,7 +70,7 @@ public class GameController {
 	}
 	
 	private void initLevelTwo() {
-		game = new Game(12, 14);
+		game = new FindingAWay(12, 14);
 		for (int y = 9; y < 11; y++) {
 			for (int x = 5; x < 9; x++) {
 				game.getTile(x, y).setGround();}}
@@ -104,7 +104,7 @@ public class GameController {
 	}
 	
 	private void initLevelThree() {
-		game = new Game(12, 14);
+		game = new FindingAWay(12, 14);
 		
 		level = 3;
 	}
