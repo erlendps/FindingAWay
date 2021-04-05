@@ -1,10 +1,13 @@
 package core;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FindingAWay {
+public class FindingAWay implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private int height;
 	private int width;
 	private Tile[][] board;
@@ -12,6 +15,7 @@ public class FindingAWay {
 	private boolean isWon = false;
 	private boolean isGameOver = false;
 	private boolean boxPickedUp = false;
+	private boolean isCrouching = false;
 
 	
 	public FindingAWay(int height, int width) {
@@ -48,6 +52,15 @@ public class FindingAWay {
 		}
 		else
 			throw new IllegalStateException("Already player on board.");
+	}
+	
+	public void removePlayer() {
+		if (playerModel == null)
+			throw new IllegalStateException("Can't remove player when it is non-existing");
+		for (Tile tile: playerModel) {
+			tile.setAir();
+		}
+		playerModel = null;
 	}
 	
 	
@@ -315,15 +328,24 @@ public class FindingAWay {
 	}
 	
 	public Tile getPlayerHead() {
+		if (playerModel == null)
+			throw new NullPointerException("Playermodel does not exist");
 		return playerModel.get(1);
+		
 	}
 	
 	public Tile getPlayerBody() {
+		if (playerModel == null)
+			throw new NullPointerException("Playermodel does not exist");
 		return playerModel.get(0);
 	}
 	
 	public Tile getPlayerBox() {
-		return playerModel.get(2);
+		if (playerModel == null)
+			throw new NullPointerException("Playermodel does not exist");
+		if (playerModel.size() > 2)
+			return playerModel.get(2);
+		return null;
 	}
 	
 	public boolean checkIfBoxPickedUp() {
@@ -331,12 +353,15 @@ public class FindingAWay {
 	}
 	
 	public List<Tile> getPlayerModel() {
-		return playerModel;
+		if (playerModel != null)
+			return new ArrayList<>(playerModel);
+		return null;
 	}
 	
 
 	public static void main(String[] args) {
 		FindingAWay game = new FindingAWay(8, 10);
+		game.getPlayerModel();
 		game.getTile(1, 1).setFinish();
 		game.getTile(1, 3).setGround();
 		game.getTile(2, 3).setGround();

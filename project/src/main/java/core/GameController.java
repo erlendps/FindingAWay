@@ -1,38 +1,58 @@
 package core;
+import java.nio.file.Path;
+import java.util.List;
+
+import fileManagement.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableArray;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import levelEditor.LevelEditorController;
 
 public class GameController {
 	
-	private int level;
+	private String level;
 	
-	FindingAWay game;
+	private FindingAWay game;
 	
-	@FXML
-	Pane board;
+	private IFileManagement sm = new StorageManager();
 	
-	@FXML
-	Button boxInteractor;
+	private IFileManagement lsm = new LevelStorageManager();
 	
-	@FXML
-	Text levelText;
+	private LevelEditorController editorController;
+	
 	
 	@FXML
-	Text winText = new Text();
+	private Pane board;
+	
+	@FXML
+	private Button boxInteractor;
+	
+	@FXML
+	private Text levelText;
+	
+	@FXML
+	private Text storageFeedbackText;
+	
+	@FXML
+	private Text winText = new Text();
 	
 	@FXML 
-	Text loseText = new Text();
+	private Text loseText = new Text();
 	
 	@FXML
-	ChoiceBox<String> choiceBox;
+	private TextField textField;
+	
+	@FXML
+	private ChoiceBox<String> choiceBox;
 	
 	@FXML
 	private void initialize() {
@@ -42,7 +62,7 @@ public class GameController {
 		drawBoard();
 	}
 	
-	private int getLevel() {
+	private String getLevel() {
 		return level;
 	}
 	
@@ -66,61 +86,68 @@ public class GameController {
 		
 		game.addPlayer(3, 6);
 		
-		level = 1;
+		level = "level1.ser";
 	}
 	
-	private void initLevelTwo() {
-		game = new FindingAWay(12, 14);
-		for (int y = 9; y < 11; y++) {
-			for (int x = 5; x < 9; x++) {
-				game.getTile(x, y).setGround();}}
-		for (int x = 1; x < 13; x++) {
-			game.getTile(x, 11).setGround();}
-		game.getTile(4, 10).setGround();
-		game.getTile(6, 8).setGround();
-		game.getTile(7, 8).setGround();
-		for (int x = 6; x < 11; x++) {
-			game.getTile(x, 4).setGround();}
-		for (int x = 1; x < 5; x++) {
-			game.getTile(x, 6).setGround();}
-		for (int x = 1; x < 4; x++) {
-			game.getTile(x, 7).setGround();}
+//	private void initLevelTwo() {
+//		game = new FindingAWay(12, 14);
+//		for (int y = 9; y < 11; y++) {
+//			for (int x = 5; x < 9; x++) {
+//				game.getTile(x, y).setGround();}}
+//		for (int x = 1; x < 13; x++) {
+//			game.getTile(x, 11).setGround();}
+//		game.getTile(4, 10).setGround();
+//		game.getTile(6, 8).setGround();
+//		game.getTile(7, 8).setGround();
+//		for (int x = 6; x < 11; x++) {
+//			game.getTile(x, 4).setGround();}
+//		for (int x = 1; x < 5; x++) {
+//			game.getTile(x, 6).setGround();}
+//		for (int x = 1; x < 4; x++) {
+//			game.getTile(x, 7).setGround();}
+//	
+//		game.getTile(0, 3).setGround();
+//		game.getTile(0, 4).setGround();
+//		game.getTile(1, 4).setGround();
+//		game.getTile(1, 5).setGround();
+//		game.getTile(1, 10).setBox();
+//		game.getTile(12, 10).setBox();
+//		game.getTile(8, 8).setBox();
+//		game.getTile(4, 5).setBox();
+//		game.getTile(1, 3).setBox();
+//		game.getTile(0, 2).setBox();
+//		game.getTile(9, 1).setFinish();
+//		
+//		game.addPlayer(3, 10);
+//
+//		level = "level2.ser";
+//	}
 	
-		game.getTile(0, 3).setGround();
-		game.getTile(0, 4).setGround();
-		game.getTile(1, 4).setGround();
-		game.getTile(1, 5).setGround();
-		game.getTile(1, 10).setBox();
-		game.getTile(12, 10).setBox();
-		game.getTile(8, 8).setBox();
-		game.getTile(4, 5).setBox();
-		game.getTile(1, 3).setBox();
-		game.getTile(0, 2).setBox();
-		game.getTile(9, 1).setFinish();
-		
-		game.addPlayer(3, 10);
-
-		level = 2;
-	}
-	
-	private void initLevelThree() {
-		game = new FindingAWay(12, 14);
-		
-		level = 3;
-	}
 	
 	private void initCurrentLevel() {
-		int currentLevel = getLevel();
-		if (currentLevel == 1)
-			initLevelOne();
-		else if (currentLevel == 2)
-			initLevelTwo();
-		else if (currentLevel == 3)
-			initLevelThree();
+		String currentLevel = getLevel();
+		
+		List<String> levelsFolder = FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.LEVELS_PATH));
+		List<String> savesFolder = FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.SAVES_PATH));
+		if (levelsFolder.contains(currentLevel)) {
+			FindingAWay newGame = lsm.loadGame(currentLevel);
+			initGame(newGame);
+		}
+		else if (savesFolder.contains(currentLevel)) {
+			FindingAWay newGame = sm.loadGame(currentLevel);
+			initGame(newGame);
+		}
+		
+		else {
+			storageFeedbackText.setText("Error resetting");
+			storageFeedbackText.setFill(Color.RED);
+		}
+		
 	}
 	
-	private void initChoiceBox() { 
-		choiceBox.setItems(FXCollections.observableArrayList("Level 1", "Level 2", "Level 3"));
+	private void initChoiceBox() {
+		choiceBox.getItems().clear();
+		choiceBox.getItems().addAll(FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.LEVELS_PATH)));
 		choiceBox.setTooltip(new Tooltip("Select the level you want to play"));
 	}
 	
@@ -137,6 +164,22 @@ public class GameController {
 				tile.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
 				board.getChildren().add(tile);
 			}
+		}
+	}
+	
+	private boolean initGame(FindingAWay newGame) {
+		if (newGame == null) {
+			storageFeedbackText.setText("Error loading game");
+			storageFeedbackText.setFill(Color.RED);
+			return false;
+		}
+		else {
+			game = newGame;
+			storageFeedbackText.setText("Game loaded");
+			storageFeedbackText.setFill(Color.BLACK);
+			createBoard();
+			drawBoard();
+			return true;
 		}
 	}
 
@@ -156,7 +199,7 @@ public class GameController {
 			board.getChildren().add(winText);
 		}
 		else if (game.isGameOver()) {
-			loseText.setText("You Lost r-word");
+			loseText.setText("You lost");
 			loseText.setStyle("-fx-font-size: 50px");
 			loseText.setFill(Color.DARKRED);
 			loseText.setTranslateX(40.0);
@@ -227,19 +270,64 @@ public class GameController {
 	}
 	
 	@FXML
-	public void handleGetSelection() {
+	public void handleInitSelection() {
 		String levelSelect = choiceBox.getValue();
+		FindingAWay newGame = lsm.loadGame(levelSelect);
 		
-		if (levelSelect == "Level 1")
-			initLevelOne();
-		else if (levelSelect == "Level 2")
-			initLevelTwo();
-		else if (levelSelect == "Level 3")
-			initLevelThree();
+		if (initGame(newGame)) {
+			level = levelSelect;
+		}
+	}
+	
+	@FXML
+	public void handleSave() {
+		if (!sm.saveGame(textField.getText().strip(), game)) {
+			storageFeedbackText.setText("Error writing file.");
+			storageFeedbackText.setFill(Color.RED);
+		}
+		else {
+			storageFeedbackText.setText("Game saved");
+			storageFeedbackText.setFill(Color.BLACK);
+			level = textField.getText().strip();
+		}
+	}
+	
+	@FXML
+	public void handleLoad() {
+		FindingAWay newGame = sm.loadGame(textField.getText().strip());
+		if (initGame(newGame))
+			level = textField.getText().strip();
 		
-		createBoard();
-		drawBoard();
+	}
+	
+	private Scene scene;
+	private Parent oldSceneRoot, editorSceneRoot;
+	
+	@FXML
+	public void handleLevelEditor() {
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/levelEditor/LevelEditor.fxml"));
+		try {
+			editorSceneRoot = fxmlLoader.load();
+				
+			//remember old UI
+			scene = board.getScene();
+			oldSceneRoot = scene.getRoot();
+			
+			editorController = fxmlLoader.getController();
+			editorController.setGameController(this);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		
+		if (editorController != null) {
+			board.getScene().setRoot(editorSceneRoot);
+		}
+	}
+	
+	public void exitLevelEditor() {
+		scene.setRoot(oldSceneRoot);
+		initChoiceBox();
 	}
 	
 	

@@ -1,6 +1,9 @@
 package core;
 
-public class Tile {
+import java.io.Serializable;
+
+public class Tile implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private int x;
 	private int y;
 	private char type; 
@@ -10,7 +13,6 @@ public class Tile {
 	 * '#' = ground/grass
 	 * '*' = goal/finish
 	 * 'B' = boxes (moveable)
-	 * '=' = water
 	 * 'o' = player 
 	 */
 	
@@ -40,7 +42,7 @@ public class Tile {
 
 	// Method to set tile type if we dont know what type is
 	public void setType(char type) {
-		if (isValidType(type) && !isGround()) {
+		if (isValidType(type)) { //&& !isGround()) {
 			this.type = type;
 		}
 		else {
