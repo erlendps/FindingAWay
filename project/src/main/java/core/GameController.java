@@ -86,7 +86,7 @@ public class GameController {
 		
 		game.addPlayer(3, 6);
 		
-		level = "level1.ser";
+		level = "level1.txt";
 	}
 	
 //	private void initLevelTwo() {
@@ -120,7 +120,7 @@ public class GameController {
 //		
 //		game.addPlayer(3, 10);
 //
-//		level = "level2.ser";
+//		level = "level2.txt";
 //	}
 	
 	
@@ -161,7 +161,6 @@ public class GameController {
 				tile.setTranslateY(y*30);
 				tile.setPrefWidth(30);
 				tile.setPrefHeight(30);
-				tile.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
 				board.getChildren().add(tile);
 			}
 		}
@@ -222,8 +221,6 @@ public class GameController {
 			return "#ea9999";
 		else if (tile.isGround())
 			return "#6aa84f";
-		else if (tile.isWater())
-			return "#3c78d8";
 		else
 			return "#cfe2f3";
 	}

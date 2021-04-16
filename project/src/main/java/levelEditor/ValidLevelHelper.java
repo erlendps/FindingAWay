@@ -2,7 +2,7 @@ package levelEditor;
 
 import core.FindingAWay;
 
-public class LevelEditorHelper {
+public class ValidLevelHelper {
 	
 	public static boolean checkIfValidLevel(FindingAWay level) {
 		if (level == null)

@@ -1,12 +1,14 @@
 package core;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Tile implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int x;
 	private int y;
-	private char type; 
+	protected char type;
+	private List<Tile> playerModel;
 	/*
 	 * For the type, these are the different (allowed) types:
 	 * ' ' = air
@@ -27,6 +29,11 @@ public class Tile implements Serializable {
 		}
 	}
 	
+	public Tile(int x, int y, char type) {
+		this(x, y);
+		setType(type);
+	}
+	
 	public int getX() {
 		return x;
 	}
@@ -38,11 +45,9 @@ public class Tile implements Serializable {
 	public char getType() {
 		return type;
 	}
-	
 
-	// Method to set tile type if we dont know what type is
 	public void setType(char type) {
-		if (isValidType(type)) { //&& !isGround()) {
+		if (isValidType(type)) {
 			this.type = type;
 		}
 		else {
@@ -65,10 +70,7 @@ public class Tile implements Serializable {
 	public void setBox() {
 		setType('B');
 	}
-	
-	public void setWater() {
-		setType('=');
-	}
+
 	
 	public void setPlayer() {
 		setType('o');
@@ -90,21 +92,16 @@ public class Tile implements Serializable {
 		return getType() == 'B';
 	}
 	
-	public boolean isWater() {
-		return getType() == '=';
-	}
-	
 	public boolean isPlayer() {
 		return getType() == 'o';
 	}
-	
 	
 	public boolean isCollisionBlock() {
 		return isGround() || isBox();
 	}
 	
-	private boolean isValidType(char type) {
-		char[] validTypes = {' ', '#', '*', 'B', '=', 'o'};
+	protected boolean isValidType(char type) {
+		char[] validTypes = {' ', '#', '*', 'B', 'o'};
 		boolean contains = false;
 		for (char t: validTypes) {
 			if (t == type) {
@@ -117,7 +114,7 @@ public class Tile implements Serializable {
 	
 	@Override
 	public String toString() {
-		return String.format("%s" ,getType());
+		return String.format("%s" , getType());
 	}
 
 }

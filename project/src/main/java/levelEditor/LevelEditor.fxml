@@ -27,7 +27,7 @@
                <children>
                   <Button layoutX="346.0" layoutY="67.0" mnemonicParsing="false" onAction="#handleReset" prefWidth="60.0" text="Reset" />
                   <TextField fx:id="textField" layoutX="20.0" layoutY="159.0" promptText="" text="" />
-                  <Text layoutX="20.0" layoutY="149.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load/Save - Name: max 18 characters, must end on .txt .ser or .text" wrappingWidth="360.65478515625" />
+                  <Text layoutX="20.0" layoutY="149.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load/Save - Name: max 18 characters, must end on .txt" wrappingWidth="360.65478515625" />
                   <Button layoutX="183.0" layoutY="159.0" mnemonicParsing="false" onAction="#handleLoad" text="Load" />
                   <Button layoutX="238.0" layoutY="159.0" mnemonicParsing="false" onAction="#handleSave" text="Save" />
                   <Text fx:id="storageFeedbackText" layoutX="334.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" />

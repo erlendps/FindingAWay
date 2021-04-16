@@ -2,6 +2,7 @@ package levelEditor;
 
 import core.FindingAWay;
 import core.GameController;
+import core.Level;
 import core.Tile;
 import fileManagement.*;
 
@@ -16,9 +17,7 @@ import javafx.scene.input.MouseEvent;
 
 public class LevelEditorController {
 	
-	private char tileType = ' ';
-	
-	private FindingAWay level;
+	private LevelEditorGame editor;
 	
 	private GameController gameController;
 	
@@ -67,34 +66,27 @@ public class LevelEditorController {
 	}
 	
 	private void initLevelEditor() {
-		level = new FindingAWay(12, 14);
+		editor = new LevelEditorGame(new Level(12, 14));
 		
 		board.getChildren().clear();
 		
-		for (int y = 0; y < level.getHeight(); y++) {
-			for (int x = 0; x < level.getWidth(); x++) {
+		for (int y = 0; y < editor.getHeight(); y++) {
+			for (int x = 0; x < editor.getWidth(); x++) {
 				int intX = x;
 				int intY = y;
-				level.getTile(x, y).setAir();
+				editor.getTile(x, y).setAir();
 				Pane tile = new Pane();
 				tile.setTranslateX(x*30);
 				tile.setTranslateY(y*30);
 				tile.setPrefWidth(30);
 				tile.setPrefHeight(30);
-				tile.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
 				tile.setOnMouseClicked((MouseEvent e) -> {
-					if (tileType != 'o') {
-						level.getTile(intX, intY).setType(tileType);
+					try {
+						editor.setTile(intX, intY);
 						drawBoard();
 					}
-					else {
-						try {
-							level.addPlayer(intX, intY);
-							drawBoard();
-						}
-						catch (Exception e2) {
-							editorFeedback.setText("Player already added.");
-						}
+					catch (Exception e1) {
+						editorFeedback.setText(e1.getMessage());
 					}
 				});
 				board.getChildren().add(tile);
@@ -104,7 +96,7 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleSetAir() {
-		tileType = ' ';
+		editor.setType(' ');
 		lastButton.underlineProperty().set(false);
 		setAirButton.underlineProperty().set(true);
 		lastButton = setAirButton;
@@ -112,7 +104,7 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleSetBox() {
-		tileType = 'B';
+		editor.setType('B');
 		lastButton.underlineProperty().set(false);
 		setBoxButton.underlineProperty().set(true);
 		lastButton = setBoxButton;
@@ -120,7 +112,7 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleSetGoal() {
-		tileType = '*';
+		editor.setType('*');
 		lastButton.underlineProperty().set(false);
 		setGoalButton.underlineProperty().set(true);
 		lastButton = setGoalButton;
@@ -128,7 +120,7 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleSetGround() {
-		tileType = '#';
+		editor.setType('#');
 		lastButton.underlineProperty().set(false);
 		setGroundButton.underlineProperty().set(true);
 		lastButton = setGroundButton;
@@ -136,7 +128,7 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleSetPlayer() {
-		tileType = 'o';
+		editor.setType('o');
 		lastButton.underlineProperty().set(false);
 		setPlayerButton.underlineProperty().set(true);
 		lastButton = setPlayerButton;
@@ -144,50 +136,50 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleRemovePlayer() {
-		level.removePlayer();
+		editor.removePlayer();
 		drawBoard();
 	}
 	
 	@FXML
 	public void handleReset() {
-		level = new FindingAWay(12, 14);
+		editor = new LevelEditorGame(new Level(12, 14));
 		drawBoard();
 	}
 	
 	@FXML
 	public void handleLoad() {
-		FindingAWay newGame = lsm.loadGame(textField.getText().strip());
-		if (newGame != null) {
-			level = newGame;
-			storageFeedbackText.setText("Level loaded");
-			storageFeedbackText.setFill(Color.BLACK);
-			drawBoard();
-		}
-		else {
-			storageFeedbackText.setText("Error reading file");
-			storageFeedbackText.setFill(Color.RED);
-		}
+//		FindingAWay newGame = lsm.loadGame(textField.getText().strip());
+//		if (newGame != null) {
+//			editor = newGame;
+//			storageFeedbackText.setText("Level loaded");
+//			storageFeedbackText.setFill(Color.BLACK);
+//			drawBoard();
+//		}
+//		else {
+//			storageFeedbackText.setText("Error reading file");
+//			storageFeedbackText.setFill(Color.RED);
+//		}
 	}
 	
 	@FXML
 	public void handleSave() {
-		if (!LevelEditorHelper.checkIfValidLevel(level)) {
-			editorFeedback.setText("Invalid level. A playermodel must be added,\n "
-					+ "the tile under the player body must be a collision block\n"
-					+ " (ground or box) and the level must have exactly one goal");
-		}
-		else {
-			if (!lsm.saveGame(textField.getText().strip(), level)) {
-				storageFeedbackText.setText("Error writing file.");
-				storageFeedbackText.setFill(Color.RED);
-				editorFeedback.setText("");
-			}
-			else {
-				storageFeedbackText.setText("Game saved");
-				storageFeedbackText.setFill(Color.BLACK);
-				editorFeedback.setText("");
-			}
-		}
+//		if (!ValidLevelHelper.checkIfValidLevel(editor)) {
+//			editorFeedback.setText("Invalid level. A playermodel must be added,\n "
+//					+ "the tile under the player body must be a collision block\n"
+//					+ " (ground or box) and the level must have exactly one goal");
+//		}
+//		else {
+//			if (!lsm.saveGame(textField.getText().strip(), editor)) {
+//				storageFeedbackText.setText("Error writing file.");
+//				storageFeedbackText.setFill(Color.RED);
+//				editorFeedback.setText("");
+//			}
+//			else {
+//				storageFeedbackText.setText("Game saved");
+//				storageFeedbackText.setFill(Color.BLACK);
+//				editorFeedback.setText("");
+//			}
+//		}
 	}
 	
 	@FXML
@@ -196,11 +188,11 @@ public class LevelEditorController {
 	}
 	
 	public void drawBoard() {
-		for (int y = 0; y < level.getHeight(); y++) {
-			for (int x = 0; x < level.getWidth(); x++) {
-				board.getChildren().get(y*level.getWidth() + x).setStyle(
+		for (int y = 0; y < editor.getHeight(); y++) {
+			for (int x = 0; x < editor.getWidth(); x++) {
+				board.getChildren().get(y*editor.getWidth() + x).setStyle(
 						"-fx-border-color: black; -fx-border-width: 1px; -fx-background-color: "
-						+ getTileColor(level.getTile(x, y)) + ";");
+						+ getTileColor(editor.getTile(x, y)) + ";");
 			}
 		}
 	}
@@ -215,8 +207,6 @@ public class LevelEditorController {
 			return "#ea9999";
 		else if (tile.isGround())
 			return "#6aa84f";
-		else if (tile.isWater())
-			return "#3c78d8";
 		else
 			return "#cfe2f3";
 	}

@@ -90,8 +90,7 @@ public class LevelStorageManager implements IFileManagement {
 		}
 		String format = fileName.substring(indexOfSplitter);
 		String name = fileName.substring(0, indexOfSplitter);
-		List<String> validFormats = new ArrayList<>(Arrays.asList(".txt", ".ser", ".text"));
-		if (!validFormats.contains(format))
+		if (!format.equals(".txt"))
 			return false;
 		if (name.length() > 18 || name.length() <= 0)
 			return false;

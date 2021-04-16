@@ -32,7 +32,7 @@
                   <Button fx:id="boxInteractor" layoutX="148.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleInteractWithBox" prefWidth="60.0" text="Pick Up" />
                   <Button layoutX="324.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleLevelEditor" text="Level Editor" />
                   <TextField fx:id="textField" layoutX="20.0" layoutY="159.0" promptText="" text="" />
-                  <Text layoutX="20.0" layoutY="149.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load/Save - Name: max 18 characters, must end on .txt .ser or .text" wrappingWidth="360.65478515625" />
+                  <Text layoutX="20.0" layoutY="149.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load/Save - Name: max 18 characters, must end on .txt" wrappingWidth="360.65478515625" />
                   <Button layoutX="183.0" layoutY="159.0" mnemonicParsing="false" onAction="#handleLoad" text="Load" />
                   <Button layoutX="238.0" layoutY="159.0" mnemonicParsing="false" onAction="#handleSave" text="Save" />
                   <Text fx:id="storageFeedbackText" layoutX="334.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" />

@@ -5,26 +5,24 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FindingAWay implements Serializable {
+
+public class FindingAWay extends AbstractGame {
 	private static final long serialVersionUID = 1L;
-	
-	private int height;
-	private int width;
-	private Tile[][] board;
-	private List<Tile> playerModel;
+//	private int height;
+//	private int width;
+//	private Tile[][] board;
+//	private List<Tile> playerModel;
 	private boolean isWon = false;
 	private boolean isGameOver = false;
 	private boolean boxPickedUp = false;
-	private boolean isCrouching = false;
 
 	
 	public FindingAWay(int height, int width) {
-		if (width > 0 && width > 0) {
-			this.height = height;
-			this.width = width;
-
-			this.board = new Tile[height][width];
-			board = new Tile[height][width];
+		if (height > 0 && width > 0) {
+			super.height = height;
+			super.width = width;
+			
+			super.board = new Tile[height][width];
 
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
@@ -37,50 +35,61 @@ public class FindingAWay implements Serializable {
 		}
 	}
 	
-	
-	public void addPlayer(int x, int y) {
-		if (playerModel == null) {
-			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()) {
-				getTile(x,y).setPlayer();
-				getTile(x,y-1).setPlayer();
-				playerModel = new ArrayList<>();
-				playerModel.add(0, getTile(x, y));   // player body
-				playerModel.add(1, getTile(x, y-1)); // player head
-			}
-			else
-				throw new IllegalStateException("Invalid placement of player model");
+	public FindingAWay(Level level) {
+		if (level != null) {
+			super.level = level;
+			super.height = level.getHeight();
+			super.width = level.getWidth();
+			super.board = level.getBoard();
+			super.playerModel = level.getPlayerModel();
 		}
 		else
-			throw new IllegalStateException("Already player on board.");
-	}
-	
-	public void removePlayer() {
-		if (playerModel == null)
-			throw new IllegalStateException("Can't remove player when it is non-existing");
-		for (Tile tile: playerModel) {
-			tile.setAir();
-		}
-		playerModel = null;
+			throw new NullPointerException("Level cant be null");
 	}
 	
 	
-	public int getHeight() {
-		return height;
-	}
-	
-	public int getWidth() {
-		return width;
-	}
-	
-	public Tile getTile(int x, int y) {
-		if (isTile(x, y)) {
-			return board[y][x];
-		}
-		else {
-			throw new IllegalArgumentException("Tile does not exist");
-		}
-	}
-	
+//	public void addPlayer(int x, int y) {
+//		if (playerModel == null) {
+//			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()) {
+//				getTile(x,y).setPlayer();
+//				getTile(x,y-1).setPlayer();
+//				playerModel = new ArrayList<>();
+//				playerModel.add(0, getTile(x, y));   // player body
+//				playerModel.add(1, getTile(x, y-1)); // player head
+//			}
+//			else
+//				throw new IllegalArgumentException("Invalid placement of player model");
+//		}
+//		else
+//			throw new IllegalStateException("Already player on board.");
+//	}
+//	
+//	public void removePlayer() {
+//		if (playerModel == null)
+//			throw new IllegalStateException("Can't remove player when it is non-existing");
+//		for (Tile tile: playerModel) {
+//			tile.setAir();
+//		}
+//		playerModel = null;
+//	}
+//	
+//	
+//	public int getHeight() {
+//		return height;
+//	}
+//	
+//	public int getWidth() {
+//		return width;
+//	}
+//	
+//	public Tile getTile(int x, int y) {
+//		if (isTile(x, y)) {
+//			return board[y][x];
+//		}
+//		else {
+//			throw new IllegalArgumentException("Tile does not exist");
+//		}
+//	}
 	
 	public void interactWithBox() {
 		Tile boxTile = getBoxTileNearPlayer();
@@ -112,8 +121,8 @@ public class FindingAWay implements Serializable {
 	
 	
 	private boolean boxInAir(Tile box) {
-		if (getTile(box.getX(), box.getY() + 1).isAir()
-			&& isTile(box.getX(), box.getY() + 1))
+		if (isTile(box.getX(), box.getY() + 1) &&
+				getTile(box.getX(), box.getY() + 1).isAir())
 			return true;
 		else return false;
 	}
@@ -160,7 +169,7 @@ public class FindingAWay implements Serializable {
 				}
 			}
 		}
-		return null; //new Tile(0,0);
+		return null;
 	}
 	
 	
@@ -286,9 +295,9 @@ public class FindingAWay implements Serializable {
 	}
 	
 	
-	private boolean isTile(int x, int y) {
-		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
-	}
+//	private boolean isTile(int x, int y) {
+//		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
+//	}
 	
 	public void moveLeft() {
 		move(-1);
@@ -327,40 +336,43 @@ public class FindingAWay implements Serializable {
 		return isWon;
 	}
 	
-	public Tile getPlayerHead() {
-		if (playerModel == null)
-			throw new NullPointerException("Playermodel does not exist");
-		return playerModel.get(1);
-		
-	}
-	
-	public Tile getPlayerBody() {
-		if (playerModel == null)
-			throw new NullPointerException("Playermodel does not exist");
-		return playerModel.get(0);
-	}
-	
-	public Tile getPlayerBox() {
-		if (playerModel == null)
-			throw new NullPointerException("Playermodel does not exist");
-		if (playerModel.size() > 2)
-			return playerModel.get(2);
-		return null;
-	}
+//	public Tile getPlayerHead() {
+//		if (playerModel == null)
+//			throw new NullPointerException("Playermodel does not exist");
+//		return getPlayerModel().get(1);//playerModel.get(1);
+//		
+//	}
+//	
+//	public Tile getPlayerBody() {
+//		if (playerModel == null)
+//			throw new NullPointerException("Playermodel does not exist");
+//		return getPlayerModel().get(0);
+//	}
+//	
+//	public Tile getPlayerBox() {
+//		if (playerModel == null)
+//			throw new NullPointerException("Playermodel does not exist");
+//		if (playerModel.size() > 2)
+//			return getPlayerModel().get(2);
+//		return null;
+//	}
 	
 	public boolean checkIfBoxPickedUp() {
 		return boxPickedUp;
 	}
 	
-	public List<Tile> getPlayerModel() {
-		if (playerModel != null)
-			return new ArrayList<>(playerModel);
-		return null;
+//	public List<Tile> getPlayerModel() {
+//		if (playerModel != null)
+//			return new ArrayList<>(playerModel);
+//		return null;
+//	}
+	public void updateLevel() {
+		level.update(super.board, super.playerModel);
 	}
 	
 
 	public static void main(String[] args) {
-		FindingAWay game = new FindingAWay(8, 10);
+		FindingAWay game = new FindingAWay(new Level(8, 10));
 		game.getPlayerModel();
 		game.getTile(1, 1).setFinish();
 		game.getTile(1, 3).setGround();
@@ -376,7 +388,9 @@ public class FindingAWay implements Serializable {
 		for (int y = 5; y < game.getHeight(); y++) {
 			for (int x = 5; x < game.getWidth()-1; x++) {
 				game.getTile(x, y).setGround();}}
+		game.updateLevel();
 		game.addPlayer(2, 6);
+		game.updateLevel();
 		System.out.println(game);
 		game.interactWithBox();
 		System.out.println(game);
