@@ -29,7 +29,6 @@ public class GameController {
 	
 	private LevelEditorController editorController;
 	
-	
 	@FXML
 	private Pane board;
 	
@@ -56,19 +55,18 @@ public class GameController {
 	
 	@FXML
 	private void initialize() {
+		initLevelTwo();
+		lsm.saveGame("level2.level", game);
 		initLevelOne();
 		createBoard();
+		lsm.saveGame("level1.level", game);
 		initChoiceBox();
 		drawBoard();
 	}
 	
-	private String getLevel() {
-		return level;
-	}
-	
 	
 	private void initLevelOne() {
-		game = new FindingAWay(12, 14);
+		game = new FindingAWay(new Level(12, 14));
 		for (int y = 7; y < game.getHeight(); y++) {
 			for (int x = 2; x < 13; x++) {
 				game.getTile(x, y).setGround();}}
@@ -86,58 +84,72 @@ public class GameController {
 		
 		game.addPlayer(3, 6);
 		
-		level = "level1.txt";
+		level = "level1.level";
 	}
 	
-//	private void initLevelTwo() {
-//		game = new FindingAWay(12, 14);
-//		for (int y = 9; y < 11; y++) {
-//			for (int x = 5; x < 9; x++) {
-//				game.getTile(x, y).setGround();}}
-//		for (int x = 1; x < 13; x++) {
-//			game.getTile(x, 11).setGround();}
-//		game.getTile(4, 10).setGround();
-//		game.getTile(6, 8).setGround();
-//		game.getTile(7, 8).setGround();
-//		for (int x = 6; x < 11; x++) {
-//			game.getTile(x, 4).setGround();}
-//		for (int x = 1; x < 5; x++) {
-//			game.getTile(x, 6).setGround();}
-//		for (int x = 1; x < 4; x++) {
-//			game.getTile(x, 7).setGround();}
-//	
-//		game.getTile(0, 3).setGround();
-//		game.getTile(0, 4).setGround();
-//		game.getTile(1, 4).setGround();
-//		game.getTile(1, 5).setGround();
-//		game.getTile(1, 10).setBox();
-//		game.getTile(12, 10).setBox();
-//		game.getTile(8, 8).setBox();
-//		game.getTile(4, 5).setBox();
-//		game.getTile(1, 3).setBox();
-//		game.getTile(0, 2).setBox();
-//		game.getTile(9, 1).setFinish();
-//		
-//		game.addPlayer(3, 10);
-//
-//		level = "level2.txt";
-//	}
+	private void initLevelTwo() {
+		game = new FindingAWay(new Level(12, 14));
+		for (int y = 9; y < 11; y++) {
+			for (int x = 5; x < 9; x++) {
+				game.getTile(x, y).setGround();}}
+		for (int x = 1; x < 13; x++) {
+			game.getTile(x, 11).setGround();}
+		game.getTile(4, 10).setGround();
+		game.getTile(6, 8).setGround();
+		game.getTile(7, 8).setGround();
+		for (int x = 6; x < 11; x++) {
+			game.getTile(x, 4).setGround();}
+		for (int x = 1; x < 5; x++) {
+			game.getTile(x, 6).setGround();}
+		for (int x = 1; x < 4; x++) {
+			game.getTile(x, 7).setGround();}
+	
+		game.getTile(0, 3).setGround();
+		game.getTile(0, 4).setGround();
+		game.getTile(1, 4).setGround();
+		game.getTile(1, 5).setGround();
+		game.getTile(1, 10).setBox();
+		game.getTile(12, 10).setBox();
+		game.getTile(8, 8).setBox();
+		game.getTile(4, 5).setBox();
+		game.getTile(1, 3).setBox();
+		game.getTile(0, 2).setBox();
+		game.getTile(9, 1).setFinish();
+		
+		game.addPlayer(3, 10);
+
+		level = "level2.level";
+	}
 	
 	
 	private void initCurrentLevel() {
-		String currentLevel = getLevel();
+		String currentLevel = level;
 		
 		List<String> levelsFolder = FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.LEVELS_PATH));
 		List<String> savesFolder = FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.SAVES_PATH));
-		if (levelsFolder.contains(currentLevel)) {
-			FindingAWay newGame = lsm.loadGame(currentLevel);
-			initGame(newGame);
-		}
-		else if (savesFolder.contains(currentLevel)) {
-			FindingAWay newGame = sm.loadGame(currentLevel);
-			initGame(newGame);
-		}
 		
+		if (level.substring(level.lastIndexOf('.')).equals(".level")) {
+			if (levelsFolder != null && levelsFolder.contains(currentLevel)) {
+				FindingAWay newGame = (FindingAWay) lsm.loadGame(currentLevel);
+				initGame(newGame);
+			}
+			else {
+				storageFeedbackText.setText("Error resetting");
+				storageFeedbackText.setFill(Color.RED);
+				throw new IllegalArgumentException("Either there is no level to reset to, or the system cant find your current level.");
+			}
+		}
+		else if (level.substring(level.lastIndexOf('.')).equals(".txt")) {
+			if (savesFolder != null && savesFolder.contains(currentLevel)) {
+				FindingAWay newGame = (FindingAWay) sm.loadGame(currentLevel);
+				initGame(newGame);
+			}
+			else {
+				storageFeedbackText.setText("Error resetting");
+				storageFeedbackText.setFill(Color.RED);
+				throw new IllegalArgumentException("Either there is no level to reset to, or the system cant find your current level.");
+			}
+		}
 		else {
 			storageFeedbackText.setText("Error resetting");
 			storageFeedbackText.setFill(Color.RED);
@@ -147,7 +159,9 @@ public class GameController {
 	
 	private void initChoiceBox() {
 		choiceBox.getItems().clear();
-		choiceBox.getItems().addAll(FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.LEVELS_PATH)));
+		List<String> levelsFolder = FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.LEVELS_PATH));
+		if (levelsFolder != null)
+			choiceBox.getItems().addAll(levelsFolder);
 		choiceBox.setTooltip(new Tooltip("Select the level you want to play"));
 	}
 	
@@ -269,7 +283,7 @@ public class GameController {
 	@FXML
 	public void handleInitSelection() {
 		String levelSelect = choiceBox.getValue();
-		FindingAWay newGame = lsm.loadGame(levelSelect);
+		FindingAWay newGame = (FindingAWay) lsm.loadGame(levelSelect);
 		
 		if (initGame(newGame)) {
 			level = levelSelect;
@@ -291,7 +305,7 @@ public class GameController {
 	
 	@FXML
 	public void handleLoad() {
-		FindingAWay newGame = sm.loadGame(textField.getText().strip());
+		FindingAWay newGame = (FindingAWay) sm.loadGame(textField.getText().strip());
 		if (initGame(newGame))
 			level = textField.getText().strip();
 		

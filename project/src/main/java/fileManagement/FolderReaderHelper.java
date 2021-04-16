@@ -1,6 +1,8 @@
 package fileManagement;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,15 @@ public class FolderReaderHelper {
 			}
 			return list;
 		}
-		catch (Exception e) {
-			e.printStackTrace();
+		catch (NullPointerException e) {
+			try {
+				Files.createDirectories(dirPath);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		catch (Exception e2) {
+			e2.printStackTrace();
 		}
 		
 		return null;

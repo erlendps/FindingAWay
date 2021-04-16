@@ -30,6 +30,12 @@ public abstract class AbstractGame implements Serializable {
 		}
 	}
 	
+	public Level getLevel() {
+		return level;
+	}
+	
+	
+	
 	public void addPlayer(int x, int y) {
 		if (playerModel == null) {
 			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()) {

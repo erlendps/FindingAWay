@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import core.AbstractGame;
 import core.FindingAWay;
 
 public class StorageManager implements IFileManagement {
@@ -34,7 +35,7 @@ public class StorageManager implements IFileManagement {
 	}
 
 	@Override
-	public boolean saveGame(String fileName, FindingAWay game) {
+	public boolean saveGame(String fileName, AbstractGame game) {
 		if (!checkFileName(fileName)) {
 			return false;
 		}

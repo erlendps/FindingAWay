@@ -1,11 +1,11 @@
 package fileManagement;
 
-import core.FindingAWay;
+import core.AbstractGame;
 
 public interface IFileManagement {
 	
-	FindingAWay loadGame(String fileName);
+	AbstractGame loadGame(String fileName);
 	
-	boolean saveGame(String fileName, FindingAWay game);
+	boolean saveGame(String fileName, AbstractGame game);
 
 }

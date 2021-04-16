@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import core.AbstractGame;
 import core.FindingAWay;
+import levelEditor.LevelEditorGame;
 
 
 /*
@@ -23,14 +25,15 @@ import core.FindingAWay;
 
 public class LevelStorageManager implements IFileManagement {
 	
-	private static final String PATH = System.getProperty("user.home") + "/tdt4100/FindingAWay/levels";
+	private static final String PATH = System.getProperty("user.home") + "/tdt4100/FindingAWay/levels/";
 
 	@Override
-	public FindingAWay loadGame(String fileName) {
+	public LevelEditorGame loadGame(String fileName) {
 		Path path = Path.of(LevelStorageManager.PATH, fileName);
 		try (FileInputStream fis = new FileInputStream(path.toFile());
 				ObjectInputStream ois = new ObjectInputStream(fis)) {
-			return (FindingAWay) ois.readObject();
+			FindingAWay tempGame = (FindingAWay) ois.readObject();
+			return new LevelEditorGame(tempGame.getLevel());
 			}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -40,7 +43,7 @@ public class LevelStorageManager implements IFileManagement {
 	}
 
 	@Override
-	public boolean saveGame(String fileName, FindingAWay game) {
+	public boolean saveGame(String fileName, AbstractGame game) {
 		if (!checkFileName(fileName)) {
 			return false;
 		}
@@ -62,6 +65,7 @@ public class LevelStorageManager implements IFileManagement {
 	
 	/*
 	 * Hjelpemetode som sjekker at filen allerede er laget
+	 * 
 	 */
 	private boolean createNewFile(Path file) {
 		try {
@@ -90,7 +94,7 @@ public class LevelStorageManager implements IFileManagement {
 		}
 		String format = fileName.substring(indexOfSplitter);
 		String name = fileName.substring(0, indexOfSplitter);
-		if (!format.equals(".txt"))
+		if (!format.equals(".level") )
 			return false;
 		if (name.length() > 18 || name.length() <= 0)
 			return false;

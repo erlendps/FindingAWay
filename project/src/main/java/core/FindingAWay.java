@@ -16,25 +16,6 @@ public class FindingAWay extends AbstractGame {
 	private boolean isGameOver = false;
 	private boolean boxPickedUp = false;
 
-	
-	public FindingAWay(int height, int width) {
-		if (height > 0 && width > 0) {
-			super.height = height;
-			super.width = width;
-			
-			super.board = new Tile[height][width];
-
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					board[y][x] = new Tile(x, y);
-				}
-			}
-		}
-		else {
-			throw new IllegalArgumentException("Height and width must be strictly positive numbers");
-		}
-	}
-	
 	public FindingAWay(Level level) {
 		if (level != null) {
 			super.level = level;
