@@ -8,7 +8,8 @@ public class Level implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int height;
 	private int width;
-	public Tile[][] board;
+	private Tile finish;
+	private Tile[][] board;
 	private List<Tile> playerModel;
 	
 	public Level(int height, int width) {
@@ -42,13 +43,18 @@ public class Level implements Serializable {
 		return board;
 	}
 	
-	public ArrayList<Tile> getPlayerModel() {
-		return (ArrayList<Tile>) playerModel;
+	public List<Tile> getPlayerModel() {
+		return playerModel;
 	}
 	
-	public void update(Tile[][] board, List<Tile> playerModel) {
+	public Tile getFinish() {
+		return finish;
+	}
+	
+	public void update(Tile[][] board, List<Tile> playerModel, Tile finish) {
 		setBoard(board);
 		setPlayerModel(playerModel);
+		setFinish(finish);
 	}
 	
 	private void setBoard(Tile[][] board) {
@@ -64,6 +70,10 @@ public class Level implements Serializable {
 			}
 		}
 		this.playerModel = playerModel;
+	}
+	
+	private void setFinish(Tile finish) {
+		this.finish = finish;
 	}
 	
 	public static void main(String[] args) {
