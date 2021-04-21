@@ -9,9 +9,6 @@ import java.io.ObjectOutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import core.AbstractGame;
 import core.FindingAWay;
@@ -24,12 +21,10 @@ import levelEditor.LevelEditorGame;
  */
 
 public class LevelStorageManager implements IFileManagement {
-	
-	private static final String PATH = System.getProperty("user.home") + "/tdt4100/FindingAWay/levels/";
 
 	@Override
-	public LevelEditorGame loadGame(String fileName) {
-		Path path = Path.of(LevelStorageManager.PATH, fileName);
+	public AbstractGame loadGame(String fileName, String pathString) {
+		Path path = Path.of(pathString, fileName);
 		try (FileInputStream fis = new FileInputStream(path.toFile());
 				ObjectInputStream ois = new ObjectInputStream(fis)) {
 			FindingAWay tempGame = (FindingAWay) ois.readObject();
@@ -47,11 +42,12 @@ public class LevelStorageManager implements IFileManagement {
 		if (!checkFileName(fileName)) {
 			return false;
 		}
-		Path path = Path.of(LevelStorageManager.PATH, fileName);
+		Path path = Path.of(FolderReaderHelper.LEVELS_PATH, fileName);
 		if (createNewFile(path)) {
 			try (FileOutputStream fos = new FileOutputStream(path.toFile());
 					ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-				oos.writeObject(game);
+				game.updateLevel();
+				oos.writeObject(new FindingAWay(game.getLevel()));
 				oos.flush();
 				return true;
 			}
@@ -64,7 +60,7 @@ public class LevelStorageManager implements IFileManagement {
 
 	
 	/*
-	 * Hjelpemetode som sjekker at filen allerede er laget
+	 * Hjelpemetode som sjekker om filen allerede er laget
 	 * 
 	 */
 	private boolean createNewFile(Path file) {

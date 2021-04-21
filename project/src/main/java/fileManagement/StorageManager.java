@@ -17,12 +17,10 @@ import core.AbstractGame;
 import core.FindingAWay;
 
 public class StorageManager implements IFileManagement {
-	
-	private static final String PATH = System.getProperty("user.home") + "/tdt4100/FindingAWay/saves";
 
 	@Override
-	public FindingAWay loadGame(String fileName) {
-		Path path = Path.of(StorageManager.PATH, fileName);
+	public FindingAWay loadGame(String fileName, String pathString) {
+		Path path = Path.of(pathString, fileName);
 		try (FileInputStream fis = new FileInputStream(path.toFile());
 				ObjectInputStream ois = new ObjectInputStream(fis)) {
 			return (FindingAWay) ois.readObject();
@@ -39,10 +37,11 @@ public class StorageManager implements IFileManagement {
 		if (!checkFileName(fileName)) {
 			return false;
 		}
-		Path path = Path.of(StorageManager.PATH, fileName);
+		Path path = Path.of(FolderReaderHelper.SAVES_PATH, fileName);
 		if (createNewFile(path)) {
 			try (FileOutputStream fos = new FileOutputStream(path.toFile());
 					ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+				game.updateLevel();
 				oos.writeObject(game);
 				oos.flush();
 				return true;
