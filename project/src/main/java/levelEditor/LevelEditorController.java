@@ -141,6 +141,12 @@ public class LevelEditorController {
 	}
 	
 	@FXML
+	public void handleRemoveFinish() {
+		editor.removeFinish();
+		drawBoard();
+	}
+	
+	@FXML
 	public void handleReset() {
 		editor = new LevelEditorGame(new Level(12, 14));
 		drawBoard();
@@ -148,38 +154,38 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleLoad() {
-//		FindingAWay newGame = lsm.loadGame(textField.getText().strip());
-//		if (newGame != null) {
-//			editor = newGame;
-//			storageFeedbackText.setText("Level loaded");
-//			storageFeedbackText.setFill(Color.BLACK);
-//			drawBoard();
-//		}
-//		else {
-//			storageFeedbackText.setText("Error reading file");
-//			storageFeedbackText.setFill(Color.RED);
-//		}
+		LevelEditorGame newEditor = (LevelEditorGame) lsm.loadGame(textField.getText().strip(), FolderReaderHelper.LEVELS_PATH);
+		if (newEditor != null) {
+			editor = newEditor;
+			storageFeedbackText.setText("Level loaded");
+			storageFeedbackText.setFill(Color.BLACK);
+			drawBoard();
+		}
+		else {
+			storageFeedbackText.setText("Error reading file");
+			storageFeedbackText.setFill(Color.RED);
+		}
 	}
 	
 	@FXML
 	public void handleSave() {
-//		if (!ValidLevelHelper.checkIfValidLevel(editor)) {
-//			editorFeedback.setText("Invalid level. A playermodel must be added,\n "
-//					+ "the tile under the player body must be a collision block\n"
-//					+ " (ground or box) and the level must have exactly one goal");
-//		}
-//		else {
-//			if (!lsm.saveGame(textField.getText().strip(), editor)) {
-//				storageFeedbackText.setText("Error writing file.");
-//				storageFeedbackText.setFill(Color.RED);
-//				editorFeedback.setText("");
-//			}
-//			else {
-//				storageFeedbackText.setText("Game saved");
-//				storageFeedbackText.setFill(Color.BLACK);
-//				editorFeedback.setText("");
-//			}
-//		}
+		if (!ValidLevelHelper.checkIfValidLevel(editor)) {
+			editorFeedback.setText("Invalid level. A playermodel must be added,\n "
+					+ "the tile under the player body must be a collision block\n"
+					+ " (ground or box) and the level must have exactly one goal");
+		}
+		else {
+			if (!lsm.saveGame(textField.getText().strip(), editor)) {
+				storageFeedbackText.setText("Error writing file.");
+				storageFeedbackText.setFill(Color.RED);
+				editorFeedback.setText("");
+			}
+			else {
+				storageFeedbackText.setText("Game saved");
+				storageFeedbackText.setFill(Color.BLACK);
+				editorFeedback.setText("");
+			}
+		}
 	}
 	
 	@FXML

@@ -41,6 +41,7 @@
                   <Button layoutX="20.0" layoutY="67.0" mnemonicParsing="false" onAction="#handleRemovePlayer" text="Remove Player" />
                   <Text fx:id="storageFeedbackText" layoutX="295.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                   <TextArea fx:id="editorFeedback" editable="false" layoutX="129.0" layoutY="68.0" prefHeight="63.0" prefWidth="207.0" />
+                  <Button layoutX="21.0" layoutY="108.0" mnemonicParsing="false" onAction="#handleRemoveFinish" text="Remove Finish" />
                </children>
             </Pane>
          </children>

@@ -11,8 +11,7 @@ import core.Level;
 
 public class LevelEditorGame extends AbstractGame {
 	private static final long serialVersionUID = 1L;
-	private Level level;
-	private char type;
+	private char editorType;
 	
 	public LevelEditorGame(Level level) {
 		if (level != null) {
@@ -21,30 +20,50 @@ public class LevelEditorGame extends AbstractGame {
 			super.width = level.getWidth();
 			super.board = level.getBoard();
 			super.playerModel = level.getPlayerModel();
-			type = ' ';
+			super.finish = level.getFinish();
+			editorType = ' ';
 		}
 		else
 			throw new NullPointerException("Level cant be null");
 	}
 	
-	public char getType() {
-		return type;
+	public char getEditorType() {
+		return editorType;
 	}
 	
 	public void setType(char type) {
 		List<Character> validTypes = new ArrayList<>(Arrays.asList(' ', '#', 'B', '*', 'o'));
 		if (!validTypes.contains(type))
 			throw new IllegalArgumentException("Not a valid type");
-		this.type = type;
+		this.editorType = type;
 	}
 	
 	public void setTile(int x, int y) {
 		if (getTile(x, y).isPlayer())
 			throw new IllegalStateException("Cant overwrite playerModel, use removePlayer insted.");
-		if (this.getType() == 'o')
+		if (getTile(x, y).isFinish())
+			throw new IllegalStateException("Cant overwrite finish tile, use removeFinish instead.");
+		if (getEditorType() == 'o')
 			super.addPlayer(x, y);
+		else if (getEditorType() == '*')
+			super.addFinish(x, y);
 		else
-			getTile(x, y).setType(this.getType());
+			getTile(x, y).setType(getEditorType());
+	}
+	
+	@Override
+	public String toString() {
+		String out = "";
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
+				if (getTile(x, y) == getPlayerHead())
+					out += 'p';
+				else
+					out += getTile(x, y);
+			}
+			out += "\n";
+		}
+		return out;
 	}
 	
 	
