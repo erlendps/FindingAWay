@@ -8,6 +8,7 @@ public abstract class AbstractGame implements Serializable {
 	private static final long serialVersionUID = 1L;
 	protected int height;
 	protected int width;
+	protected Tile finish;
 	protected Tile[][] board;
 	protected List<Tile> playerModel;
 	protected Level level;
@@ -34,10 +35,32 @@ public abstract class AbstractGame implements Serializable {
 		return level;
 	}
 	
+	public Tile getFinish() {
+		return finish;
+	}
 	
+	public void addFinish(int x, int y) {
+		if (finish != null)
+			throw new IllegalStateException("Cant have more than one goal");
+		if (!isTile(x, y))
+			throw new IllegalArgumentException("Not a valid tile");
+		if (getTile(x, y).isAir()) {
+			getTile(x, y).setFinish();
+			finish = getTile(x, y);
+		}
+		else
+			throw new IllegalArgumentException("Invalid placement");	
+	}
+	
+	public void removeFinish() {
+		if (finish == null)
+			throw new IllegalStateException("Cant remove something that does not exist");
+		finish.setAir();
+		finish = null;
+	}
 	
 	public void addPlayer(int x, int y) {
-		if (playerModel == null) {
+		if (playerModel == null && isTile(x, y)) {
 			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()) {
 				getTile(x,y).setPlayer();
 				getTile(x,y-1).setPlayer();
@@ -68,7 +91,7 @@ public abstract class AbstractGame implements Serializable {
 	public Tile getPlayerHead() {
 		if (playerModel == null)
 			throw new NullPointerException("Playermodel does not exist");
-		return getPlayerModel().get(1);//playerModel.get(1);
+		return getPlayerModel().get(1);
 		
 	}
 	
@@ -90,5 +113,9 @@ public abstract class AbstractGame implements Serializable {
 		if (playerModel != null)
 			return new ArrayList<>(playerModel);
 		return null;
+	}
+	
+	public void updateLevel() {
+		level.update(board, playerModel, finish);
 	}
 }

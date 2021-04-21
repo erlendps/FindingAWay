@@ -5,13 +5,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import levelEditor.ValidLevelHelper;
+
 
 public class FindingAWay extends AbstractGame {
 	private static final long serialVersionUID = 1L;
-//	private int height;
-//	private int width;
-//	private Tile[][] board;
-//	private List<Tile> playerModel;
 	private boolean isWon = false;
 	private boolean isGameOver = false;
 	private boolean boxPickedUp = false;
@@ -23,54 +21,11 @@ public class FindingAWay extends AbstractGame {
 			super.width = level.getWidth();
 			super.board = level.getBoard();
 			super.playerModel = level.getPlayerModel();
+			super.finish = level.getFinish();
 		}
 		else
 			throw new NullPointerException("Level cant be null");
 	}
-	
-	
-//	public void addPlayer(int x, int y) {
-//		if (playerModel == null) {
-//			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()) {
-//				getTile(x,y).setPlayer();
-//				getTile(x,y-1).setPlayer();
-//				playerModel = new ArrayList<>();
-//				playerModel.add(0, getTile(x, y));   // player body
-//				playerModel.add(1, getTile(x, y-1)); // player head
-//			}
-//			else
-//				throw new IllegalArgumentException("Invalid placement of player model");
-//		}
-//		else
-//			throw new IllegalStateException("Already player on board.");
-//	}
-//	
-//	public void removePlayer() {
-//		if (playerModel == null)
-//			throw new IllegalStateException("Can't remove player when it is non-existing");
-//		for (Tile tile: playerModel) {
-//			tile.setAir();
-//		}
-//		playerModel = null;
-//	}
-//	
-//	
-//	public int getHeight() {
-//		return height;
-//	}
-//	
-//	public int getWidth() {
-//		return width;
-//	}
-//	
-//	public Tile getTile(int x, int y) {
-//		if (isTile(x, y)) {
-//			return board[y][x];
-//		}
-//		else {
-//			throw new IllegalArgumentException("Tile does not exist");
-//		}
-//	}
 	
 	public void interactWithBox() {
 		Tile boxTile = getBoxTileNearPlayer();
@@ -112,12 +67,11 @@ public class FindingAWay extends AbstractGame {
 	private boolean playerInAir() {
 		Tile playerBody = getPlayerBody();
 		if (isTile(playerBody.getX(), playerBody.getY() + 1)) {
-			if (getTile(playerBody.getX(), playerBody.getY() + 1).isAir())
+			if (!getTile(playerBody.getX(), playerBody.getY() + 1).isCollisionBlock())
 				return true;
 			else
 				return false;
-		}
-			
+		}	
 		else {
 			isGameOver = true;
 			return false;
@@ -128,11 +82,15 @@ public class FindingAWay extends AbstractGame {
 	private Tile getBoxTileNearPlayer() {
 		List<Tile> iteratorList = new ArrayList<>();
 		iteratorList.addAll(playerModel);
-		Collections.reverse(iteratorList);
+		Collections.reverse(iteratorList); 	
+		// reversing because if playerModel contains box-tile, box tile will be the index 0
+		// if not, we get the head as index 0, so the code then checks if a box is closest
+		// to the head of the player.
+		
+		if (iteratorList.get(0).isBox())
+			return getTile(iteratorList.get(0).getX(), iteratorList.get(0).getY());
 		
 		for (Tile tile: iteratorList.subList(0, 2)) {
-			if (tile.isBox())
-				return tile;
 			try {
 				if (getTile(tile.getX()-1, tile.getY()).isBox()) 
 					return getTile(tile.getX()-1, tile.getY());
@@ -169,116 +127,104 @@ public class FindingAWay extends AbstractGame {
 		getPlayerBox().setBox();
 		}
 	
+	private boolean isValidMove(int dx) {
+		List<Tile> targets;
+		if (isMovingUp(dx))
+			targets = getTargets(dx, -1);
+		else
+			targets = getTargets(dx, 0);
+		
+		if (targets == null)
+			return false;
+		
+		for (Tile tile: targets) {
+			if (!tile.isAir() && !playerModel.contains(tile) && !tile.isFinish())
+				return false;
+		}
+		return true;
+	}
 	
-	private int checkIfValidMove(int dx) {
+	private boolean isMovingUp(int dx) {
+		if (isTile(getPlayerBody().getX() + dx, getPlayerBody().getY()) &&
+				getTile(getPlayerBody().getX() + dx, getPlayerBody().getY()).isCollisionBlock())
+			return true;
+		return false;	
+	}
+	
+	private List<Tile> getTargets(int dx, int dy) {
 		List<Tile> targets = new ArrayList<>();
 		
 		for (Tile tile: playerModel) {
 			int targetX = tile.getX() + dx;
-			int targetY = tile.getY();
+			int targetY = tile.getY() + dy;
 			if (!isTile(targetX, targetY))
-				return 0;
+				return null;
 			Tile targetTile = getTile(targetX, targetY);
 			targets.add(targetTile);
 		}
-		if (targets.get(0).isCollisionBlock()) {
-			if (!getTile(targets.get(0).getX(), targets.get(0).getY() - 1).isCollisionBlock()
-				|| 
-				getTile(targets.get(0).getX(), targets.get(0).getY() - 1) == playerModel.get(playerModel.size() - 1)) {
-				// checks if the tile above is a collision block: if it isnt, it indicates a stair
-				for (int i = 0; i < targets.size(); i++) {
-					targets.set(i, getTile(targets.get(i).getX(), targets.get(i).getY() - 1));
-				} // it then shifts all target-tiles 1 tile up.
-					
-				for (Tile tile: targets) {
-					if (tile.isCollisionBlock() && tile != playerModel.get(playerModel.size()-1))
-						return 0;}
-				return 2;
-				
-			} else return 0;
-		}
-		
-		for (Tile tile: targets) {
-			if (tile.isCollisionBlock() && tile != playerModel.get(playerModel.size()-1))
-				return 0;}
-		
-		return 1;
+		return targets;
 	}
 	
+	private List<Character> getPlayerModelTypes() {
+		List<Character> types = new ArrayList<>();
+		for (Tile tile: getPlayerModel()) {
+			types.add(tile.getType());
+		}
+		return types;
+	}
 	
 	private void move(int dx) {
 		if (isWon || isGameOver)
 			throw new IllegalStateException("Game finished");
-		int controller = checkIfValidMove(dx);
-		if (controller == 0)
-			throw new IllegalStateException("Making this move would put the game"
-					+ " in an illegal state.");
-		else if (controller == 1) {
-			List<Tile> newPlayerModel = new ArrayList<>();
-			for (Tile tile: playerModel) {
-				newPlayerModel.add(getTile(tile.getX() + dx, tile.getY()));
-				tile.setAir();
-			}
-			
-			for (Tile tile: newPlayerModel.subList(0, 2)) {
-				if (tile.isFinish())
-					isWon = true;}
-			
-			for (int i = 0; i < newPlayerModel.size(); i++) {
-				if (i == 2)
-					newPlayerModel.get(i).setBox();
-				else
-					newPlayerModel.get(i).setPlayer();
-			}
-			playerModel = newPlayerModel;
-			
-			while (playerInAir()) {
-				for (Tile tile: playerModel) {
-					tile.setAir();
-				}
-				List<Tile> newPlayer = new ArrayList<>();
-				for (Tile tile: playerModel) {
-					Tile targetTile = getTile(tile.getX(), tile.getY() + 1);
-					try { 
-						if (tile == getPlayerBox())
-							targetTile.setBox();
-						else
-							targetTile.setPlayer();
-					} catch (Exception e) {
-						targetTile.setPlayer();
-					}
-					newPlayer.add(targetTile);
-				}
-				playerModel = newPlayer;
-			}
+		
+		if (!ValidLevelHelper.checkIfValidLevel(this))
+			throw new IllegalStateException("Something is not right");
+		
+		List<Tile> targetPlayerModel;
+		if (!isValidMove(dx))
+			throw new IllegalStateException("Not a valid move");
+		
+		// move to the side and up
+		else if (isValidMove(dx) && isMovingUp(dx)) 
+			targetPlayerModel = getTargets(dx, -1);
+		
+		// move only to the side
+		else 
+			targetPlayerModel = getTargets(dx, 0);
+		
+		List<Character> playerModelTypes = getPlayerModelTypes();
+		for (Tile tile: playerModel) {
+			tile.setAir();
 		}
-		else {
+		for (int i = 0; i < playerModel.size(); i++) {
+			targetPlayerModel.get(i).setType(playerModelTypes.get(i));
+		}
+		playerModel = targetPlayerModel;
+		if (checkIfFinished())
+			isWon = true;
+		
+		while(playerInAir()) {
+			playerModelTypes = getPlayerModelTypes();
 			for (Tile tile: playerModel) {
 				tile.setAir();
 			}
-			List<Tile> newPlayerModel = new ArrayList<>();
-			for (Tile tile: playerModel) {
-				Tile targetTile = getTile(tile.getX() + dx, tile.getY() - 1);
-				if (targetTile.isFinish())
-					isWon = true;
-				try { 
-					if (tile == getPlayerBox())
-						targetTile.setBox();
-					else
-						targetTile.setPlayer();
-				} catch (Exception e) {
-					targetTile.setPlayer();
-				}
-				newPlayerModel.add(targetTile);
+			targetPlayerModel = getTargets(0, 1);
+			for (int i = 0; i < playerModel.size(); i++) {
+				targetPlayerModel.get(i).setType(playerModelTypes.get(i));
 			}
-			playerModel = newPlayerModel;
+			playerModel = targetPlayerModel;
+			if (checkIfFinished())
+				isWon = true;
 		}
 	}
 	
-	
-//	private boolean isTile(int x, int y) {
-//		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
-//	}
+	private boolean checkIfFinished() {
+		for (Tile tile: playerModel) {
+			if (tile == getFinish())
+				return true;
+		}
+		return false;
+	}
 	
 	public void moveLeft() {
 		move(-1);
@@ -317,45 +263,16 @@ public class FindingAWay extends AbstractGame {
 		return isWon;
 	}
 	
-//	public Tile getPlayerHead() {
-//		if (playerModel == null)
-//			throw new NullPointerException("Playermodel does not exist");
-//		return getPlayerModel().get(1);//playerModel.get(1);
-//		
-//	}
-//	
-//	public Tile getPlayerBody() {
-//		if (playerModel == null)
-//			throw new NullPointerException("Playermodel does not exist");
-//		return getPlayerModel().get(0);
-//	}
-//	
-//	public Tile getPlayerBox() {
-//		if (playerModel == null)
-//			throw new NullPointerException("Playermodel does not exist");
-//		if (playerModel.size() > 2)
-//			return getPlayerModel().get(2);
-//		return null;
-//	}
-	
 	public boolean checkIfBoxPickedUp() {
 		return boxPickedUp;
 	}
-	
-//	public List<Tile> getPlayerModel() {
-//		if (playerModel != null)
-//			return new ArrayList<>(playerModel);
-//		return null;
-//	}
-	public void updateLevel() {
-		level.update(super.board, super.playerModel);
-	}
+
 	
 
 	public static void main(String[] args) {
 		FindingAWay game = new FindingAWay(new Level(8, 10));
 		game.getPlayerModel();
-		game.getTile(1, 1).setFinish();
+		game.addFinish(1, 1);;
 		game.getTile(1, 3).setGround();
 		game.getTile(2, 3).setGround();
 		game.getTile(3, 3).setGround();
@@ -373,33 +290,8 @@ public class FindingAWay extends AbstractGame {
 		game.addPlayer(2, 6);
 		game.updateLevel();
 		System.out.println(game);
-		game.interactWithBox();
-		System.out.println(game);
-		game.swapBoxSide();
-		System.out.println(game);
 		game.moveRight();
-		System.out.println(game);
-		game.moveRight();
-		System.out.println(game);
-		game.moveRight();
-		game.swapBoxSide();
-		System.out.println(game);
-		game.interactWithBox();
-		System.out.println(game);
-		game.moveRight();
-		game.interactWithBox();
-		System.out.println(game);
-		game.moveLeft();
-		game.swapBoxSide();
-		System.out.println(game);
-		game.interactWithBox();
-		System.out.println(game);
-		game.moveLeft();
-		game.moveLeft();
-		System.out.println(game);
-		game.moveLeft();
-		game.moveLeft();
-		System.out.println(game);
+		System.out.println(game.isValidMove(1));
 	}
 }
 
