@@ -80,7 +80,7 @@ public class GameController {
 		game.getTile(10, 6).setGround();
 		game.getTile(2, 6).setBox();
 		game.getTile(8, 4).setBox();
-		game.getTile(2, 1).setFinish();
+		game.addFinish(2, 1);
 		
 		game.addPlayer(3, 6);
 		
@@ -114,7 +114,7 @@ public class GameController {
 		game.getTile(4, 5).setBox();
 		game.getTile(1, 3).setBox();
 		game.getTile(0, 2).setBox();
-		game.getTile(9, 1).setFinish();
+		game.addFinish(9, 1);
 		
 		game.addPlayer(3, 10);
 
@@ -130,7 +130,7 @@ public class GameController {
 		
 		if (level.substring(level.lastIndexOf('.')).equals(".level")) {
 			if (levelsFolder != null && levelsFolder.contains(currentLevel)) {
-				FindingAWay newGame = (FindingAWay) lsm.loadGame(currentLevel);
+				FindingAWay newGame = (FindingAWay) sm.loadGame(currentLevel, FolderReaderHelper.LEVELS_PATH);
 				initGame(newGame);
 			}
 			else {
@@ -141,7 +141,7 @@ public class GameController {
 		}
 		else if (level.substring(level.lastIndexOf('.')).equals(".txt")) {
 			if (savesFolder != null && savesFolder.contains(currentLevel)) {
-				FindingAWay newGame = (FindingAWay) sm.loadGame(currentLevel);
+				FindingAWay newGame = (FindingAWay) sm.loadGame(currentLevel, FolderReaderHelper.SAVES_PATH);
 				initGame(newGame);
 			}
 			else {
@@ -283,7 +283,7 @@ public class GameController {
 	@FXML
 	public void handleInitSelection() {
 		String levelSelect = choiceBox.getValue();
-		FindingAWay newGame = (FindingAWay) lsm.loadGame(levelSelect);
+		FindingAWay newGame = (FindingAWay) sm.loadGame(levelSelect, FolderReaderHelper.LEVELS_PATH);
 		
 		if (initGame(newGame)) {
 			level = levelSelect;
@@ -305,7 +305,7 @@ public class GameController {
 	
 	@FXML
 	public void handleLoad() {
-		FindingAWay newGame = (FindingAWay) sm.loadGame(textField.getText().strip());
+		FindingAWay newGame = (FindingAWay) sm.loadGame(textField.getText().strip(), FolderReaderHelper.SAVES_PATH);
 		if (initGame(newGame))
 			level = textField.getText().strip();
 		
