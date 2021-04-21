@@ -16,7 +16,7 @@ public class FindingAWayTest {
 	}
 	
 	private void initGame() {
-		game = new FindingAWay(8, 10);
+		game = new FindingAWay(new Level(8, 10));
 		game.getTile(1, 1).setFinish();
 		game.getTile(1, 3).setGround();
 		game.getTile(2, 3).setGround();
