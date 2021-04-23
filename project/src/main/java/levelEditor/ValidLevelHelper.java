@@ -9,7 +9,7 @@ public class ValidLevelHelper {
 		if (level == null)
 			return false;
 		return checkIfPlayerAdded(level) && checkIfCollisionUnderPlayer(level)
-				&& checkExactlyOneGoal(level);
+				&& checkExactlyOneFinish(level);
 	}
 	
 	private static boolean checkIfPlayerAdded(AbstractGame level) {
@@ -22,14 +22,9 @@ public class ValidLevelHelper {
 		return level.getTile(level.getPlayerBody().getX(), level.getPlayerBody().getY() + 1).isCollisionBlock();
 	}
 	
-	private static boolean checkExactlyOneGoal(AbstractGame level) {
-		int count = 0;
-		for (int y = 0; y < level.getHeight(); y++) {
-			for (int x = 0; x < level.getWidth(); x++) {
-				if (level.getTile(x, y).isFinish())
-					count++;
-			}
-		}
-		return count == 1;
+	private static boolean checkExactlyOneFinish(AbstractGame level) {
+		if (level.getFinish() == null)
+			return false;
+		return true;
 	}
 }

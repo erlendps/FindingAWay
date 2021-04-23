@@ -29,7 +29,8 @@ public class FindingAWay extends AbstractGame {
 	
 	public void interactWithBox() {
 		Tile boxTile = getBoxTileNearPlayer();
-		if (boxTile != null)
+
+		if (boxTile != null) {
 			if (!boxPickedUp) {
 				int dy = boxTile.getY() - getPlayerHead().getY();
 				int targetY = boxTile.getY() - dy;
@@ -42,8 +43,6 @@ public class FindingAWay extends AbstractGame {
 				playerModel.remove(2);
 				while (boxInAir(boxTile)) {
 					if (!isTile(boxTile.getX(), boxTile.getY() + 1))
-						isGameOver = true;
-					if (isGameOver)
 						break;
 					boxTile.setAir();
 					boxTile = getTile(boxTile.getX(), boxTile.getY() + 1);
@@ -51,6 +50,8 @@ public class FindingAWay extends AbstractGame {
 				}
 				boxPickedUp = false;
 			}
+			playerFalling();
+		}
 		else
 			throw new IllegalStateException("No box near the player.");
 	}
@@ -66,20 +67,31 @@ public class FindingAWay extends AbstractGame {
 	
 	private boolean playerInAir() {
 		Tile playerBody = getPlayerBody();
+		Tile playerBox = getPlayerBox();
 		if (isTile(playerBody.getX(), playerBody.getY() + 1)) {
-			if (!getTile(playerBody.getX(), playerBody.getY() + 1).isCollisionBlock())
-				return true;
-			else
-				return false;
-		}	
+			if (playerBox == null) {
+				if (!getTile(playerBody.getX(), playerBody.getY() + 1).isCollisionBlock())
+					return true;
+				else
+					return false;
+			}
+			else {
+				if (getTile(playerBody.getX(), playerBody.getY() + 1).isCollisionBlock()
+						|| getTile(playerBox.getX(), playerBox.getY() + 1).isCollisionBlock())
+					return false;
+				else
+					return true;
+			}
+		}
 		else {
 			isGameOver = true;
 			return false;
 		}
 	}
 	
-	
 	private Tile getBoxTileNearPlayer() {
+		if (getPlayerModel() == null)
+			throw new NullPointerException("Playermodel does not exist.");
 		List<Tile> iteratorList = new ArrayList<>();
 		iteratorList.addAll(playerModel);
 		Collections.reverse(iteratorList); 	
@@ -116,15 +128,22 @@ public class FindingAWay extends AbstractGame {
 		if (!boxPickedUp)
 			throw new IllegalStateException("No box to swap side with.");
 		
+		if (getPlayerBox() == null)
+			throw new NullPointerException("Box tile is null.");
+		
 		int dx = getPlayerBox().getX() - getPlayerHead().getX();
 		int targetX = getPlayerHead().getX() - dx;
 		int targetY = getPlayerHead().getY();
-		if (!isTile(targetX, targetY) || !getTile(targetX, targetY).isAir())
+		if (!isTile(targetX, targetY) || getTile(targetX, targetY).isCollisionBlock())
 			throw new IllegalStateException("Cant swap to this tile.");
 		
 		getPlayerBox().setAir();
 		playerModel.set(2, getTile(targetX, targetY));
 		getPlayerBox().setBox();
+		if (checkIfFinished())
+			isWon = true;
+		
+		playerFalling();
 		}
 	
 	private boolean isValidMove(int dx) {
@@ -203,6 +222,27 @@ public class FindingAWay extends AbstractGame {
 		if (checkIfFinished())
 			isWon = true;
 		
+//		while(playerInAir()) {
+//			playerModelTypes = getPlayerModelTypes();
+//			for (Tile tile: playerModel) {
+//				if (!tile.isGround())
+//					tile.setAir();
+//			}
+//			targetPlayerModel = getTargets(0, 1);
+//			for (int i = 0; i < playerModel.size(); i++) {
+//				if (!targetPlayerModel.get(i).isGround())
+//					targetPlayerModel.get(i).setType(playerModelTypes.get(i));
+//			}
+//			playerModel = targetPlayerModel;
+//			if (checkIfFinished())
+//				isWon = true;
+//		}
+		playerFalling();
+	}
+	
+	private void playerFalling() {
+		List<Character> playerModelTypes;
+		List<Tile> targetPlayerModel;
 		while(playerInAir()) {
 			playerModelTypes = getPlayerModelTypes();
 			for (Tile tile: playerModel) {
@@ -292,6 +332,22 @@ public class FindingAWay extends AbstractGame {
 		System.out.println(game);
 		game.moveRight();
 		System.out.println(game.isValidMove(1));
+		
+		FindingAWay g2 = new FindingAWay(new Level(10, 5));
+		g2.getTile(4, 3).setGround();
+		g2.getTile(3, 3).setGround();
+		g2.getTile(3, 2).setBox();
+		g2.addPlayer(4, 2);
+		g2.addFinish(0, 0);
+		g2.getTile(1, 6).setGround();
+		g2.getTile(2, 9).setGround();
+		g2.interactWithBox();
+		g2.moveLeft();
+		g2.moveLeft();
+		System.out.println(g2.getPlayerBox().getX());
+		System.out.println(g2.getPlayerBox().getY());
+		g2.interactWithBox();
+		System.out.println(g2);
 	}
 }
 

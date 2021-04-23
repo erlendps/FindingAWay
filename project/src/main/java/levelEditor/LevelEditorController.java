@@ -162,29 +162,24 @@ public class LevelEditorController {
 			drawBoard();
 		}
 		else {
-			storageFeedbackText.setText("Error reading file");
+			storageFeedbackText.setText("Error reading file. It could be a path \n"
+					+ "issue or the level is not valid.");
 			storageFeedbackText.setFill(Color.RED);
 		}
 	}
 	
 	@FXML
 	public void handleSave() {
-		if (!ValidLevelHelper.checkIfValidLevel(editor)) {
-			editorFeedback.setText("Invalid level. A playermodel must be added,\n "
-					+ "the tile under the player body must be a collision block\n"
-					+ " (ground or box) and the level must have exactly one goal");
+		if (!lsm.saveGame(textField.getText().strip(), editor)) {
+			storageFeedbackText.setText("Error writing file. It could be a\n"
+					+ " path issue, or the level is not valid.");
+			storageFeedbackText.setFill(Color.RED);
+			editorFeedback.setText("");
 		}
 		else {
-			if (!lsm.saveGame(textField.getText().strip(), editor)) {
-				storageFeedbackText.setText("Error writing file.");
-				storageFeedbackText.setFill(Color.RED);
-				editorFeedback.setText("");
-			}
-			else {
-				storageFeedbackText.setText("Game saved");
-				storageFeedbackText.setFill(Color.BLACK);
-				editorFeedback.setText("");
-			}
+			storageFeedbackText.setText("Game saved");
+			storageFeedbackText.setFill(Color.BLACK);
+			editorFeedback.setText("");
 		}
 	}
 	

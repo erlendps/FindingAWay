@@ -61,7 +61,8 @@ public abstract class AbstractGame implements Serializable {
 	
 	public void addPlayer(int x, int y) {
 		if (playerModel == null && isTile(x, y)) {
-			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()) {
+			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()
+					&& getTile(x, y+1).isCollisionBlock()) {
 				getTile(x,y).setPlayer();
 				getTile(x,y-1).setPlayer();
 				playerModel = new ArrayList<>();

@@ -51,6 +51,14 @@ public class Level implements Serializable {
 		return finish;
 	}
 	
+	private boolean isTile(Tile tile) {
+		if (tile == null)
+			return false;
+		
+		return tile.getX() >= 0 && tile.getX() < getWidth() 
+				&& tile.getY() >= 0 && tile.getY() < getHeight();
+	}
+	
 	public void update(Tile[][] board, List<Tile> playerModel, Tile finish) {
 		setBoard(board);
 		setPlayerModel(playerModel);
@@ -59,13 +67,15 @@ public class Level implements Serializable {
 	
 	private void setBoard(Tile[][] board) {
 		if (board != null && (board.length == getHeight() && board[0].length == getWidth()))
-		this.board = board;
+			this.board = board;
+		else 
+			throw new IllegalArgumentException("Not a valid board");
 	}
 	
 	private void setPlayerModel(List<Tile> playerModel) {
 		if (playerModel != null) {
 			for (Tile tile: playerModel) {
-				if (!tile.isPlayer())
+				if (!tile.isPlayer() || !isTile(tile))
 					throw new IllegalArgumentException("This is not a playermodel");
 			}
 		}
@@ -73,6 +83,8 @@ public class Level implements Serializable {
 	}
 	
 	private void setFinish(Tile finish) {
+		if (!isTile(finish) && finish != null)
+			throw new IllegalArgumentException("This is not a valid tile");
 		this.finish = finish;
 	}
 	
