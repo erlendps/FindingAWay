@@ -1,15 +1,16 @@
 package core;
-import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import fileManagement.StorageManager;
+import levelEditor.LevelEditorGame;
 import levelEditor.ValidLevelHelper;
 
 
 public class FindingAWay extends AbstractGame {
-	private static final long serialVersionUID = 1L;
 	private boolean isWon = false;
 	private boolean isGameOver = false;
 	private boolean boxPickedUp = false;
@@ -24,7 +25,7 @@ public class FindingAWay extends AbstractGame {
 			super.finish = level.getFinish();
 		}
 		else
-			throw new NullPointerException("Level cant be null");
+			throw new IllegalArgumentException("Level cant be null");
 	}
 	
 	public void interactWithBox() {
@@ -37,7 +38,6 @@ public class FindingAWay extends AbstractGame {
 				boxTile.setAir();
 				getTile(boxTile.getX(), targetY).setBox();
 				playerModel.add(2, getTile(boxTile.getX(), targetY));
-				boxPickedUp = true;
 			}
 			else {
 				playerModel.remove(2);
@@ -48,8 +48,9 @@ public class FindingAWay extends AbstractGame {
 					boxTile = getTile(boxTile.getX(), boxTile.getY() + 1);
 					boxTile.setBox();
 				}
-				boxPickedUp = false;
+
 			}
+			setBoxPickedUp();
 			playerFalling();
 		}
 		else
@@ -84,7 +85,7 @@ public class FindingAWay extends AbstractGame {
 			}
 		}
 		else {
-			isGameOver = true;
+			setGameOver();
 			return false;
 		}
 	}
@@ -141,7 +142,7 @@ public class FindingAWay extends AbstractGame {
 		playerModel.set(2, getTile(targetX, targetY));
 		getPlayerBox().setBox();
 		if (checkIfFinished())
-			isWon = true;
+			setIsWon();
 		
 		playerFalling();
 		}
@@ -220,7 +221,7 @@ public class FindingAWay extends AbstractGame {
 		}
 		playerModel = targetPlayerModel;
 		if (checkIfFinished())
-			isWon = true;
+			setIsWon();
 		
 //		while(playerInAir()) {
 //			playerModelTypes = getPlayerModelTypes();
@@ -254,7 +255,7 @@ public class FindingAWay extends AbstractGame {
 			}
 			playerModel = targetPlayerModel;
 			if (checkIfFinished())
-				isWon = true;
+				setIsWon();
 		}
 	}
 	
@@ -299,12 +300,27 @@ public class FindingAWay extends AbstractGame {
 		return isGameOver;
 	}
 	
+	public void setGameOver() {
+		isGameOver = true;
+	}
+	
 	public boolean isWon() {
 		return isWon;
 	}
 	
+	public void setIsWon() {
+		isWon = true;
+	}
+	
 	public boolean checkIfBoxPickedUp() {
 		return boxPickedUp;
+	}
+	
+	public void setBoxPickedUp() {
+		if (checkIfBoxPickedUp())
+			boxPickedUp = false;
+		else
+			boxPickedUp = true;
 	}
 
 	
@@ -328,26 +344,11 @@ public class FindingAWay extends AbstractGame {
 				game.getTile(x, y).setGround();}}
 		game.updateLevel();
 		game.addPlayer(2, 6);
-		game.updateLevel();
-		System.out.println(game);
-		game.moveRight();
-		System.out.println(game.isValidMove(1));
-		
-		FindingAWay g2 = new FindingAWay(new Level(10, 5));
-		g2.getTile(4, 3).setGround();
-		g2.getTile(3, 3).setGround();
-		g2.getTile(3, 2).setBox();
-		g2.addPlayer(4, 2);
-		g2.addFinish(0, 0);
-		g2.getTile(1, 6).setGround();
-		g2.getTile(2, 9).setGround();
-		g2.interactWithBox();
-		g2.moveLeft();
-		g2.moveLeft();
-		System.out.println(g2.getPlayerBox().getX());
-		System.out.println(g2.getPlayerBox().getY());
-		g2.interactWithBox();
-		System.out.println(g2);
+		StorageManager sm = new StorageManager();
+		System.out.println(sm.saveGame("gaming.txt", game));
+		FindingAWay g2 = (FindingAWay) sm.loadGame("gaming.txt", false);
+		LevelEditorGame editor = (LevelEditorGame) sm.loadGame("gaming.txt", true);
+		System.out.println(editor);
 	}
 }
 

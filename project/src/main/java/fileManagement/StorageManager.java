@@ -2,60 +2,142 @@ package fileManagement;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import core.AbstractGame;
 import core.FindingAWay;
+import core.Level;
+import core.Tile;
+import levelEditor.LevelEditorGame;
+import levelEditor.ValidLevelHelper;
 
 public class StorageManager implements IFileManagement {
+	public static final String SAVES_FOLDER = System.getProperty("user.home") + "/tdt4100/FindingAWay/saves/";
 
 	@Override
-	public FindingAWay loadGame(String fileName, String pathString) {
-		Path path = Path.of(pathString, fileName);
-		try (FileInputStream fis = new FileInputStream(path.toFile());
-				ObjectInputStream ois = new ObjectInputStream(fis)) {
-			return (FindingAWay) ois.readObject();
+	public AbstractGame loadGame(String fileName, boolean loadEditor) {
+		Path path = Path.of(StorageManager.SAVES_FOLDER + fileName);
+		
+		
+		try {
+			Scanner scanner = new Scanner(path.toFile());
+			int height = scanner.nextInt();
+			int width = scanner.nextInt();
+			Level level = new Level(height, width);
+			Tile[][] board = new Tile[height][width];
+			scanner.nextLine();
+			String boardString = scanner.nextLine();
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					board[y][x] = new Tile(x, y, boardString.charAt(y * width + x));
+				}
 			}
+			int playerModelSize = scanner.nextInt();
+			List<Tile> playerModel = new ArrayList<>();
+			for (int i = 0; i < playerModelSize; i++) {
+				int X = scanner.nextInt();
+				int Y = scanner.nextInt();
+				playerModel.add(board[Y][X]);
+			}
+			int finishX = scanner.nextInt();
+			int finishY = scanner.nextInt();
+			Tile finish = board[finishY][finishX];
+			level.update(board, playerModel, finish);
+			if (loadEditor) {
+				LevelEditorGame editor = new LevelEditorGame(level);
+				scanner.close();
+				return editor;
+			}
+			else {
+				FindingAWay game = new FindingAWay(level);
+				if (scanner.nextBoolean())
+					game.setIsWon();
+				if (scanner.nextBoolean())
+					game.setGameOver();
+				if (scanner.nextBoolean())
+					game.setBoxPickedUp();
+				scanner.close();
+				
+				if (ValidLevelHelper.checkIfValidLevel(game))
+					return game;
+				else
+					return null;
+			}
+		}
 		catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-		return null;
-		
 	}
 
 	@Override
 	public boolean saveGame(String fileName, AbstractGame game) {
-		if (!checkFileName(fileName)) {
+		if (!checkFileName(fileName)) 
 			return false;
-		}
-		Path path = Path.of(FolderReaderHelper.SAVES_PATH, fileName);
+		
+		if (!ValidLevelHelper.checkIfValidLevel(game))
+			return false;
+		
+		Path path = Path.of(StorageManager.SAVES_FOLDER + fileName);
+		
 		if (createNewFile(path)) {
-			try (FileOutputStream fos = new FileOutputStream(path.toFile());
-					ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-				game.updateLevel();
-				oos.writeObject(game);
-				oos.flush();
+			try {
+				PrintWriter pw = new PrintWriter(path.toFile());
+				pw.println(game.getHeight());
+				pw.println(game.getWidth());
+				for (int y = 0; y < game.getHeight(); y++) {
+					for (int x = 0; x < game.getWidth(); x++) {
+						pw.print(game.getTile(x, y).getType());
+					}
+				}
+				pw.println();
+				pw.println(game.getPlayerModel().size());
+				for (Tile tile: game.getPlayerModel()) {
+					pw.print(tile.getX());
+					pw.print(" ");
+					pw.println(tile.getY());
+				}
+				pw.print(game.getFinish().getX());
+				pw.print(" ");
+				pw.println(game.getFinish().getY());
+				if (game instanceof FindingAWay) {
+					pw.println(((FindingAWay) game).isWon());
+					pw.println(((FindingAWay) game).isGameOver());
+					pw.println(((FindingAWay) game).checkIfBoxPickedUp());
+				}
+				else {
+					for (int i = 0; i < 3; i++) {
+						pw.println(false);
+					}
+				}
+				pw.flush();
+				pw.close();
 				return true;
 			}
-			catch (IOException e) {
+			catch (FileNotFoundException e) {
 				e.printStackTrace();
+				return false;
 			}
 		}
-		return false;
+		else
+			return false;
 	}
 
 	
 	/*
-	 * Hjelpemetode som sjekker at filen allerede er laget
+	 * Hjelpemetode som sjekker om filen allerede er laget
 	 */
 	private boolean createNewFile(Path file) {
 		try {

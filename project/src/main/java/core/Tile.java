@@ -1,14 +1,9 @@
 package core;
 
-import java.io.Serializable;
-import java.util.List;
-
-public class Tile implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Tile {
 	private int x;
 	private int y;
-	protected char type;
-	private List<Tile> playerModel;
+	private char type;
 	/*
 	 * For the type, these are the different (allowed) types:
 	 * ' ' = air

@@ -10,7 +10,6 @@ import core.Tile;
 import core.Level;
 
 public class LevelEditorGame extends AbstractGame {
-	private static final long serialVersionUID = 1L;
 	private char editorType;
 	
 	public LevelEditorGame(Level level) {
@@ -24,7 +23,7 @@ public class LevelEditorGame extends AbstractGame {
 			editorType = ' ';
 		}
 		else
-			throw new NullPointerException("Level cant be null");
+			throw new IllegalArgumentException("Level cant be null");
 	}
 	
 	public char getEditorType() {

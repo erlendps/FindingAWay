@@ -1,11 +1,9 @@
 package core;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractGame implements Serializable {
-	private static final long serialVersionUID = 1L;
+public abstract class AbstractGame {
 	protected int height;
 	protected int width;
 	protected Tile finish;
