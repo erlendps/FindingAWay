@@ -1,11 +1,8 @@
 package core;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-public class Level implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Level {
 	private int height;
 	private int width;
 	private Tile finish;

@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import core.AbstractGame;
-import core.FindingAWay;
-import core.Tile;
 import core.Level;
 
 public class LevelEditorGame extends AbstractGame {

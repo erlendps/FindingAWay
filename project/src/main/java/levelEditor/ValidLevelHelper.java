@@ -1,7 +1,7 @@
 package levelEditor;
 
 import core.AbstractGame;
-import core.FindingAWay;
+
 
 public class ValidLevelHelper {
 	
