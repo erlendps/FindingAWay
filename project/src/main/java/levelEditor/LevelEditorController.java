@@ -1,6 +1,5 @@
 package levelEditor;
 
-import core.FindingAWay;
 import core.GameController;
 import core.Level;
 import core.Tile;
@@ -21,11 +20,10 @@ public class LevelEditorController {
 	
 	private GameController gameController;
 	
-	private LevelStorageManager lsm = new LevelStorageManager();
+	private StorageManager sm = new StorageManager();
 	
 	@FXML
 	private Pane board;
-	
 	
 	@FXML
 	private TextField textField;
@@ -154,7 +152,7 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleLoad() {
-		LevelEditorGame newEditor = (LevelEditorGame) lsm.loadGame(textField.getText().strip(), FolderReaderHelper.LEVELS_PATH);
+		LevelEditorGame newEditor = (LevelEditorGame) sm.loadGame(textField.getText().strip(), true);
 		if (newEditor != null) {
 			editor = newEditor;
 			storageFeedbackText.setText("Level loaded");
@@ -170,7 +168,7 @@ public class LevelEditorController {
 	
 	@FXML
 	public void handleSave() {
-		if (!lsm.saveGame(textField.getText().strip(), editor)) {
+		if (!sm.saveGame(textField.getText().strip(), editor)) {
 			storageFeedbackText.setText("Error writing file. It could be a\n"
 					+ " path issue, or the level is not valid.");
 			storageFeedbackText.setFill(Color.RED);

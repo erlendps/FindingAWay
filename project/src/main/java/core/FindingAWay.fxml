@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -25,8 +24,7 @@
             <Pane minHeight="-Infinity" prefHeight="200.0" prefWidth="420.0" GridPane.rowIndex="1">
                <children>
                   <Button layoutX="148.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleMoveLeft" prefHeight="50.0" prefWidth="60.0" text="Left" />
-                  <Button layoutX="346.0" layoutY="94.0" mnemonicParsing="false" onAction="#handleReset" prefWidth="60.0" text="Reset" />
-                  <ChoiceBox fx:id="choiceBox" layoutX="14.0" layoutY="14.0" prefHeight="27.0" prefWidth="102.0" value="" />
+                  <Button layoutX="40.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleReset" prefWidth="60.0" text="Reset" />
                   <Button layoutX="223.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleMoveRight" prefHeight="50.0" prefWidth="60.0" text="Right" />
                   <Button layoutX="223.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSwap" prefWidth="60.0" text="Swap" />
                   <Button fx:id="boxInteractor" layoutX="148.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleInteractWithBox" prefWidth="60.0" text="Pick Up" />
@@ -36,7 +34,6 @@
                   <Button layoutX="183.0" layoutY="159.0" mnemonicParsing="false" onAction="#handleLoad" text="Load" />
                   <Button layoutX="238.0" layoutY="159.0" mnemonicParsing="false" onAction="#handleSave" text="Save" />
                   <Text fx:id="storageFeedbackText" layoutX="334.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-                  <Button layoutX="34.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleInitSelection" text="Confirm" />
                </children>
             </Pane>
          </children>

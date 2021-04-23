@@ -1,17 +1,13 @@
 package core;
-import java.nio.file.Path;
-import java.util.List;
+
 
 import fileManagement.*;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -24,8 +20,6 @@ public class GameController {
 	private FindingAWay game;
 	
 	private IFileManagement sm = new StorageManager();
-	
-	private IFileManagement lsm = new LevelStorageManager();
 	
 	private LevelEditorController editorController;
 	
@@ -51,16 +45,12 @@ public class GameController {
 	private TextField textField;
 	
 	@FXML
-	private ChoiceBox<String> choiceBox;
-	
-	@FXML
 	private void initialize() {
 		initLevelTwo();
-		lsm.saveGame("level2.level", game);
+		sm.saveGame("level2.txt", game);
 		initLevelOne();
 		createBoard();
-		lsm.saveGame("level1.level", game);
-		initChoiceBox();
+		sm.saveGame("level1.txt", game);
 		drawBoard();
 	}
 	
@@ -84,7 +74,7 @@ public class GameController {
 		
 		game.addPlayer(3, 6);
 		
-		level = "level1.level";
+		level = "level1.txt";
 	}
 	
 	private void initLevelTwo() {
@@ -118,51 +108,22 @@ public class GameController {
 		
 		game.addPlayer(3, 10);
 
-		level = "level2.level";
+		level = "level2.txt";
 	}
 	
 	
 	private void initCurrentLevel() {
 		String currentLevel = level;
-		
-		List<String> levelsFolder = FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.LEVELS_PATH));
-		List<String> savesFolder = FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.SAVES_PATH));
-		
-		if (level.substring(level.lastIndexOf('.')).equals(".level")) {
-			if (levelsFolder != null && levelsFolder.contains(currentLevel)) {
-				FindingAWay newGame = (FindingAWay) sm.loadGame(currentLevel, FolderReaderHelper.LEVELS_PATH);
-				initGame(newGame);
-			}
-			else {
-				storageFeedbackText.setText("Error resetting");
-				storageFeedbackText.setFill(Color.RED);
-				throw new IllegalArgumentException("Either there is no level to reset to, or the system cant find your current level.");
-			}
-		}
-		else if (level.substring(level.lastIndexOf('.')).equals(".txt")) {
-			if (savesFolder != null && savesFolder.contains(currentLevel)) {
-				FindingAWay newGame = (FindingAWay) sm.loadGame(currentLevel, FolderReaderHelper.SAVES_PATH);
-				initGame(newGame);
-			}
-			else {
-				storageFeedbackText.setText("Error resetting");
-				storageFeedbackText.setFill(Color.RED);
-				throw new IllegalArgumentException("Either there is no level to reset to, or the system cant find your current level.");
-			}
+
+		FindingAWay newGame = (FindingAWay) sm.loadGame(currentLevel, false);
+		if (newGame != null) {
+			initGame(newGame);
 		}
 		else {
 			storageFeedbackText.setText("Error resetting");
 			storageFeedbackText.setFill(Color.RED);
+			throw new IllegalArgumentException("Either there is no level to reset to, or the system cant find your current level.");
 		}
-		
-	}
-	
-	private void initChoiceBox() {
-		choiceBox.getItems().clear();
-		List<String> levelsFolder = FolderReaderHelper.getItemsInFolder(Path.of(FolderReaderHelper.LEVELS_PATH));
-		if (levelsFolder != null)
-			choiceBox.getItems().addAll(levelsFolder);
-		choiceBox.setTooltip(new Tooltip("Select the level you want to play"));
 	}
 	
 	private void createBoard() {
@@ -281,16 +242,6 @@ public class GameController {
 	}
 	
 	@FXML
-	public void handleInitSelection() {
-		String levelSelect = choiceBox.getValue();
-		FindingAWay newGame = (FindingAWay) sm.loadGame(levelSelect, FolderReaderHelper.LEVELS_PATH);
-		
-		if (initGame(newGame)) {
-			level = levelSelect;
-		}
-	}
-	
-	@FXML
 	public void handleSave() {
 		if (!sm.saveGame(textField.getText().strip(), game)) {
 			storageFeedbackText.setText("Error writing file.");
@@ -305,7 +256,7 @@ public class GameController {
 	
 	@FXML
 	public void handleLoad() {
-		FindingAWay newGame = (FindingAWay) sm.loadGame(textField.getText().strip(), FolderReaderHelper.SAVES_PATH);
+		FindingAWay newGame = (FindingAWay) sm.loadGame(textField.getText().strip(), false);
 		if (initGame(newGame))
 			level = textField.getText().strip();
 		
@@ -338,7 +289,6 @@ public class GameController {
 	
 	public void exitLevelEditor() {
 		scene.setRoot(oldSceneRoot);
-		initChoiceBox();
 	}
 	
 	
