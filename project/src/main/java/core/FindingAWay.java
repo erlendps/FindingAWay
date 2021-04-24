@@ -345,11 +345,9 @@ public class FindingAWay extends AbstractGame {
 		game.updateLevel();
 		game.addPlayer(2, 6);
 		StorageManager sm = new StorageManager();
-		System.out.println(sm.saveGame("gaming.txt", game));
 		FindingAWay g2 = (FindingAWay) sm.loadGame("gaming.txt", false);
 		LevelEditorGame editor = (LevelEditorGame) sm.loadGame("gaming.txt", true);
 		System.out.println(editor);
-		sm.loadGame("foo.txt", false);
 	}
 }
 
