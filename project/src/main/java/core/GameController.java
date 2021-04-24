@@ -244,15 +244,16 @@ public class GameController {
 	}
 	
 	@FXML
-	public void handleSave() throws FileNotFoundException {
-		if (!sm.saveGame(textField.getText().strip(), game)) {
-			storageFeedbackText.setText("Error writing file.");
-			storageFeedbackText.setFill(Color.RED);
-		}
-		else {
+	public void handleSave() {
+		try {
+			sm.saveGame(textField.getText().strip(), game);
 			storageFeedbackText.setText("Game saved");
 			storageFeedbackText.setFill(Color.BLACK);
 			level = textField.getText().strip();
+		}
+		catch (Exception e) {
+			storageFeedbackText.setText(e.getMessage());
+			storageFeedbackText.setFill(Color.RED);
 		}
 	}
 	
