@@ -19,7 +19,14 @@ public class ValidLevelHelper {
 	}
 	
 	private static boolean checkIfCollisionUnderPlayer(AbstractGame level) {
-		return level.getTile(level.getPlayerBody().getX(), level.getPlayerBody().getY() + 1).isCollisionBlock();
+		boolean out;
+		try {
+			out = level.getTile(level.getPlayerBody().getX(), level.getPlayerBody().getY() + 1).isCollisionBlock();
+		}
+		catch (IllegalArgumentException e) {
+			out = true; // returns true if tile under player is not a tile.
+		}
+		return out;
 	}
 	
 	private static boolean checkExactlyOneFinish(AbstractGame level) {
@@ -27,4 +34,5 @@ public class ValidLevelHelper {
 			return false;
 		return true;
 	}
+	
 }
