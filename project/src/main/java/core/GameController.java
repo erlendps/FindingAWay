@@ -1,6 +1,8 @@
 package core;
 
 
+import java.io.FileNotFoundException;
+
 import fileManagement.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -112,7 +114,7 @@ public class GameController {
 	}
 	
 	
-	private void initCurrentLevel() {
+	private void initCurrentLevel() throws FileNotFoundException {
 		String currentLevel = level;
 
 		FindingAWay newGame = (FindingAWay) sm.loadGame(currentLevel, false);
@@ -229,7 +231,7 @@ public class GameController {
 	}
 	
 	@FXML
-	public void handleReset() {
+	public void handleReset() throws FileNotFoundException {
 		if (board.getChildren().contains(winText)) 
 			board.getChildren().remove(winText);
 		
@@ -255,7 +257,7 @@ public class GameController {
 	}
 	
 	@FXML
-	public void handleLoad() {
+	public void handleLoad() throws FileNotFoundException {
 		FindingAWay newGame = (FindingAWay) sm.loadGame(textField.getText().strip(), false);
 		if (initGame(newGame))
 			level = textField.getText().strip();

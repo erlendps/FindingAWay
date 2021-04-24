@@ -21,12 +21,11 @@ public class StorageManager implements IFileManagement {
 	public static final String SAVES_FOLDER = System.getProperty("user.home") + "/tdt4100/FindingAWay/saves/";
 
 	@Override
-	public AbstractGame loadGame(String fileName, boolean loadEditor) {
+	public AbstractGame loadGame(String fileName, boolean loadEditor) throws FileNotFoundException {
 		Path path = Path.of(StorageManager.SAVES_FOLDER + fileName);
 		
 		
-		try {
-			Scanner scanner = new Scanner(path.toFile());
+		try (Scanner scanner = new Scanner(path.toFile())) {
 			int height = scanner.nextInt();
 			int width = scanner.nextInt();
 			Level level = new Level(height, width);
@@ -51,7 +50,6 @@ public class StorageManager implements IFileManagement {
 			level.update(board, playerModel, finish);
 			if (loadEditor) {
 				LevelEditorGame editor = new LevelEditorGame(level);
-				scanner.close();
 				return editor;
 			}
 			else {
@@ -62,17 +60,12 @@ public class StorageManager implements IFileManagement {
 					game.setGameOver();
 				if (scanner.nextBoolean())
 					game.setBoxPickedUp();
-				scanner.close();
 				
 				if (ValidLevelHelper.checkIfValidLevel(game))
 					return game;
 				else
 					return null;
 			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
 		}
 	}
 

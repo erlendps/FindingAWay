@@ -1,5 +1,6 @@
 package core;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -324,7 +325,7 @@ public class FindingAWay extends AbstractGame {
 
 	
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		FindingAWay game = new FindingAWay(new Level(8, 10));
 		game.getPlayerModel();
 		game.addFinish(1, 1);;
@@ -348,6 +349,7 @@ public class FindingAWay extends AbstractGame {
 		FindingAWay g2 = (FindingAWay) sm.loadGame("gaming.txt", false);
 		LevelEditorGame editor = (LevelEditorGame) sm.loadGame("gaming.txt", true);
 		System.out.println(editor);
+		sm.loadGame("foo.txt", false);
 	}
 }
 

@@ -1,5 +1,7 @@
 package levelEditor;
 
+import java.io.FileNotFoundException;
+
 import core.GameController;
 import core.Level;
 import core.Tile;
@@ -151,7 +153,7 @@ public class LevelEditorController {
 	}
 	
 	@FXML
-	public void handleLoad() {
+	public void handleLoad() throws FileNotFoundException {
 		LevelEditorGame newEditor = (LevelEditorGame) sm.loadGame(textField.getText().strip(), true);
 		if (newEditor != null) {
 			editor = newEditor;
