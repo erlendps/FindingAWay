@@ -50,7 +50,10 @@ public class StorageManager implements IFileManagement {
 			level.update(board, playerModel, finish);
 			if (loadEditor) {
 				LevelEditorGame editor = new LevelEditorGame(level);
-				return editor;
+				if (ValidLevelHelper.checkIfValidLevel(editor))
+					return editor;
+				else
+					throw new IllegalStateException("This is not a valid level");
 			}
 			else {
 				FindingAWay game = new FindingAWay(level);
@@ -64,13 +67,13 @@ public class StorageManager implements IFileManagement {
 				if (ValidLevelHelper.checkIfValidLevel(game))
 					return game;
 				else
-					return null;
+					throw new IllegalStateException("This is not a valid level");
 			}
 		}
 	}
 
 	@Override
-	public boolean saveGame(String fileName, AbstractGame game) {
+	public boolean saveGame(String fileName, AbstractGame game) throws FileNotFoundException {
 		if (!checkFileName(fileName)) 
 			return false;
 		
@@ -80,8 +83,7 @@ public class StorageManager implements IFileManagement {
 		Path path = Path.of(StorageManager.SAVES_FOLDER + fileName);
 		
 		if (createNewFile(path)) {
-			try {
-				PrintWriter pw = new PrintWriter(path.toFile());
+			try (PrintWriter pw = new PrintWriter(path.toFile())) {
 				pw.println(game.getHeight());
 				pw.println(game.getWidth());
 				for (int y = 0; y < game.getHeight(); y++) {
@@ -110,12 +112,7 @@ public class StorageManager implements IFileManagement {
 					}
 				}
 				pw.flush();
-				pw.close();
 				return true;
-			}
-			catch (FileNotFoundException e) {
-				e.printStackTrace();
-				return false;
 			}
 		}
 		else
