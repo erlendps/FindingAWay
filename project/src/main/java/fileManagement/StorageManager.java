@@ -18,11 +18,12 @@ import levelEditor.LevelEditorGame;
 import levelEditor.ValidLevelHelper;
 
 public class StorageManager implements IFileManagement {
-	public static final String SAVES_FOLDER = System.getProperty("user.home") + "/tdt4100/FindingAWay/saves/";
+	public static final String SAVES_FOLDER = Path.of(System.getProperty("user.home"),
+			"tdt4100", "FindingAWay", "saves").toString();
 
 	@Override
 	public AbstractGame loadGame(String fileName, boolean loadEditor) throws FileNotFoundException {
-		Path path = Path.of(StorageManager.SAVES_FOLDER + fileName);
+		Path path = Path.of(StorageManager.SAVES_FOLDER, fileName);
 		
 		
 		try (Scanner scanner = new Scanner(path.toFile())) {
@@ -80,7 +81,7 @@ public class StorageManager implements IFileManagement {
 		if (!ValidLevelHelper.checkIfValidLevel(game))
 			return false;
 		
-		Path path = Path.of(StorageManager.SAVES_FOLDER + fileName);
+		Path path = Path.of(StorageManager.SAVES_FOLDER, fileName);
 		
 		if (createNewFile(path)) {
 			try (PrintWriter pw = new PrintWriter(path.toFile())) {
