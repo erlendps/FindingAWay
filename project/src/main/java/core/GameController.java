@@ -47,7 +47,7 @@ public class GameController {
 	private TextField textField;
 	
 	@FXML
-	private void initialize() {
+	private void initialize() throws FileNotFoundException {
 		initLevelTwo();
 		sm.saveGame("level2.txt", game);
 		initLevelOne();
@@ -244,7 +244,7 @@ public class GameController {
 	}
 	
 	@FXML
-	public void handleSave() {
+	public void handleSave() throws FileNotFoundException {
 		if (!sm.saveGame(textField.getText().strip(), game)) {
 			storageFeedbackText.setText("Error writing file.");
 			storageFeedbackText.setFill(Color.RED);

@@ -169,7 +169,7 @@ public class LevelEditorController {
 	}
 	
 	@FXML
-	public void handleSave() {
+	public void handleSave() throws FileNotFoundException {
 		if (!sm.saveGame(textField.getText().strip(), editor)) {
 			storageFeedbackText.setText("Error writing file. It could be a\n"
 					+ " path issue, or the level is not valid.");
