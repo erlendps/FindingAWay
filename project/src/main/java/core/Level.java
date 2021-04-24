@@ -74,6 +74,8 @@ public class Level {
 			int countPlayerTile = 0;
 			int countBox = 0;
 			for (Tile tile: playerModel) {
+				if (!isTile(tile))
+					throw new IllegalArgumentException("this is not a valid tile");
 				switch (tile.getType()) {
 				case 'o':
 					countPlayerTile++;
