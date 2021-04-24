@@ -8,6 +8,6 @@ public interface IFileManagement {
 	
 	AbstractGame loadGame(String fileName, boolean loadEditor) throws FileNotFoundException;
 	
-	boolean saveGame(String fileName, AbstractGame game) throws FileNotFoundException;
+	void saveGame(String fileName, AbstractGame game) throws FileNotFoundException;
 
 }

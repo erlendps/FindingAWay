@@ -74,12 +74,13 @@ public class StorageManager implements IFileManagement {
 	}
 
 	@Override
-	public boolean saveGame(String fileName, AbstractGame game) throws FileNotFoundException {
+	public void saveGame(String fileName, AbstractGame game) throws FileNotFoundException {
 		if (!checkFileName(fileName)) 
-			return false;
+			throw new IllegalArgumentException("Not a valid file name");
 		
-		if (!ValidLevelHelper.checkIfValidLevel(game))
-			return false;
+		if (!ValidLevelHelper.checkIfValidLevel(game)) {
+			throw new IllegalArgumentException("Not a valid level");
+		}
 		
 		Path path = Path.of(StorageManager.SAVES_FOLDER, fileName);
 		
@@ -113,11 +114,10 @@ public class StorageManager implements IFileManagement {
 					}
 				}
 				pw.flush();
-				return true;
 			}
 		}
 		else
-			return false;
+			throw new FileNotFoundException();
 	}
 
 	
