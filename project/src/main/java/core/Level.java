@@ -71,10 +71,28 @@ public class Level {
 	
 	private void setPlayerModel(List<Tile> playerModel) {
 		if (playerModel != null) {
+			int countPlayerTile = 0;
+			int countBox = 0;
 			for (Tile tile: playerModel) {
-				if (!tile.isPlayer() || !isTile(tile))
-					throw new IllegalArgumentException("This is not a playermodel");
+				switch (tile.getType()) {
+				case 'o':
+					countPlayerTile++;
+					break;
+				case 'B':
+					countBox++;
+					break;
+				}
 			}
+			if (playerModel.size() == 2) {
+				if (countPlayerTile != 2)
+					throw new IllegalArgumentException("this is not a playermodel.");
+			}
+			else if(playerModel.size() == 3) {
+				if (countPlayerTile != 2 || countBox != 1)
+					throw new IllegalArgumentException("this is not a playermodel.");
+				}
+			else
+				throw new IllegalArgumentException("this is not a playermodel.");
 		}
 		this.playerModel = playerModel;
 	}
