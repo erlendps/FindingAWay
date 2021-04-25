@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import levelEditor.LevelEditorController;
 
 public class GameController {
+	// declaring all fields
 	
 	private String level;
 	
@@ -47,6 +48,8 @@ public class GameController {
 	private TextField textField;
 	
 	@FXML
+	// initializes the game, also saves two pre-created levels for the user
+	// to play
 	private void initialize() throws FileNotFoundException {
 		initLevelTwo();
 		sm.saveGame("level2.txt", game);
@@ -56,7 +59,7 @@ public class GameController {
 		drawBoard();
 	}
 	
-	
+	// inits level 1
 	private void initLevelOne() {
 		game = new FindingAWay(new Level(12, 14));
 		for (int y = 7; y < game.getHeight(); y++) {
@@ -79,6 +82,7 @@ public class GameController {
 		level = "level1.txt";
 	}
 	
+	// inits level 2
 	private void initLevelTwo() {
 		game = new FindingAWay(new Level(12, 14));
 		for (int y = 9; y < 11; y++) {
@@ -113,7 +117,8 @@ public class GameController {
 		level = "level2.txt";
 	}
 	
-	
+	// inits the current level. It initiates based on what the last loaded save was
+	// Used for resetting a level, it then resets to the last save.
 	private void initCurrentLevel() throws FileNotFoundException {
 		String currentLevel = level;
 
@@ -128,6 +133,7 @@ public class GameController {
 		}
 	}
 	
+	// creates the board (pane)
 	private void createBoard() {
 		board.getChildren().clear();
 		
@@ -143,6 +149,7 @@ public class GameController {
 		}
 	}
 	
+	// initiates the argument
 	private boolean initGame(FindingAWay newGame) {
 		if (newGame == null) {
 			storageFeedbackText.setText("Error loading game");
@@ -158,7 +165,8 @@ public class GameController {
 			return true;
 		}
 	}
-
+	
+	// draws the board
 	private void drawBoard() {
 		for (int y = 0; y < game.getHeight(); y++) {
 			for (int x = 0; x < game.getWidth(); x++) {
@@ -184,6 +192,7 @@ public class GameController {
 		}
 	}
 	
+	// helper method to get the tile color
 	private String getTileColor(Tile tile) {
 		if (tile == game.getPlayerHead()) 
 			return "#fce5cd";
@@ -244,6 +253,7 @@ public class GameController {
 	}
 	
 	@FXML
+	// saves the game
 	public void handleSave() {
 		try {
 			sm.saveGame(textField.getText().strip(), game);
@@ -258,6 +268,7 @@ public class GameController {
 	}
 	
 	@FXML
+	// loads a game
 	public void handleLoad() throws FileNotFoundException {
 		FindingAWay newGame = (FindingAWay) sm.loadGame(textField.getText().strip(), false);
 		if (initGame(newGame))
@@ -265,6 +276,10 @@ public class GameController {
 		
 	}
 	
+	// these fields are used for storage of the current scene, so that you come
+	// back to the original scene when finished in the leveleditor.
+	// Some parts of the code is inspired by the todo-list-example with multiple
+	// controllers and fxml-files.
 	private Scene scene;
 	private Parent oldSceneRoot, editorSceneRoot;
 	
@@ -290,6 +305,7 @@ public class GameController {
 		}
 	}
 	
+	// exits the level editor.
 	public void exitLevelEditor() {
 		scene.setRoot(oldSceneRoot);
 	}
