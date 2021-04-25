@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import fileManagement.StorageManager;
-import levelEditor.LevelEditorGame;
 import levelEditor.ValidLevelHelper;
 
 
@@ -28,6 +26,7 @@ public class FindingAWay extends AbstractGame {
 			throw new IllegalArgumentException("Level cant be null");
 	}
 	
+	// either picks up or drops a box depending on if box is picked up.
 	public void interactWithBox() {
 		Tile boxTile = getBoxTileNearPlayer();
 
@@ -59,74 +58,7 @@ public class FindingAWay extends AbstractGame {
 			throw new IllegalStateException("No box near the player.");
 	}
 	
-	
-	private boolean boxInAir(Tile box) {
-		if (isTile(box.getX(), box.getY() + 1) &&
-				getTile(box.getX(), box.getY() + 1).isAir())
-			return true;
-		else return false;
-	}
-	
-	
-	private boolean playerInAir() {
-		Tile playerBody = getPlayerBody();
-		Tile playerBox = getPlayerBox();
-		if (isTile(playerBody.getX(), playerBody.getY() + 1)) {
-			if (playerBox == null) {
-				if (!getTile(playerBody.getX(), playerBody.getY() + 1).isCollisionBlock())
-					return true;
-				else
-					return false;
-			}
-			else {
-				if (getTile(playerBody.getX(), playerBody.getY() + 1).isCollisionBlock()
-						|| getTile(playerBox.getX(), playerBox.getY() + 1).isCollisionBlock())
-					return false;
-				else
-					return true;
-			}
-		}
-		else {
-			setGameOver();
-			return false;
-		}
-	}
-	
-	private Tile getBoxTileNearPlayer() {
-		if (getPlayerModel() == null)
-			throw new NullPointerException("Playermodel does not exist, add it first");
-		List<Tile> iteratorList = new ArrayList<>();
-		iteratorList.addAll(playerModel);
-		Collections.reverse(iteratorList); 	
-		// reversing because if playerModel contains box-tile, box tile will be the index 0
-		// if not, we get the head as index 0, so the code then checks if a box is closest
-		// to the head of the player.
-		
-		if (iteratorList.get(0).isBox())
-			return getTile(iteratorList.get(0).getX(), iteratorList.get(0).getY());
-		
-		for (Tile tile: iteratorList.subList(0, 2)) {
-			try {
-				if (getTile(tile.getX()-1, tile.getY()).isBox()) 
-					return getTile(tile.getX()-1, tile.getY());
-				else if (getTile(tile.getX()+1, tile.getY()).isBox())
-					return getTile(tile.getX()+1, tile.getY());	
-			}
-			catch (Exception e) {
-				try {
-					if (getTile(tile.getX()-1, tile.getY()).isBox()) 
-						return getTile(tile.getX()-1, tile.getY());
-				}
-				catch (Exception f) {
-					if (getTile(tile.getX()+1, tile.getY()).isBox())
-						return getTile(tile.getX()+1, tile.getY());	
-				}
-			}
-		}
-		return null;
-	}
-	
-	
+	// method that swaps the side the box is on, if its a valid "move"
 	public void swapBoxSide() {
 		if (!boxPickedUp)
 			throw new IllegalStateException("No box to swap side with.");
@@ -150,6 +82,87 @@ public class FindingAWay extends AbstractGame {
 		playerFalling();
 		}
 	
+	// helper method that returns true if the box is in the air, used only when
+	// player drops a box.
+	private boolean boxInAir(Tile box) {
+		if (isTile(box.getX(), box.getY() + 1) &&
+				getTile(box.getX(), box.getY() + 1).isAir())
+			return true;
+		else return false;
+	}
+	
+	// helper method that returns a box Tile if it is close enough to the player.
+	// returns null otherwise
+	private Tile getBoxTileNearPlayer() {
+		if (getPlayerModel() == null)
+			throw new NullPointerException("Playermodel does not exist, add it first");
+		List<Tile> iteratorList = new ArrayList<>();
+		iteratorList.addAll(playerModel);
+		Collections.reverse(iteratorList); 	
+		// reversing because if playerModel contains box-tile, box tile will be the index 0
+		// if not, we get the head as index 0, so the code then checks if a box is closest
+		// to the head of the player.
+		
+		// if this is true, we know its a box that the player is holding, which 
+		// must be prioritized.
+		if (iteratorList.get(0).isBox())
+			return getTile(iteratorList.get(0).getX(), iteratorList.get(0).getY());
+		
+		// if over is false, we know iteratorList (reversed playerModel) does not
+		// contain a box tile. Using try/catch so that it doesnt fail if it comes
+		// to a tile that does not exists.
+		for (Tile tile: iteratorList) {
+			try {
+				if (getTile(tile.getX()-1, tile.getY()).isBox()) 
+					return getTile(tile.getX()-1, tile.getY());
+				else if (getTile(tile.getX()+1, tile.getY()).isBox())
+					return getTile(tile.getX()+1, tile.getY());	
+			}
+			catch (Exception e) {
+				try {
+					if (getTile(tile.getX()-1, tile.getY()).isBox()) 
+						return getTile(tile.getX()-1, tile.getY());
+				}
+				catch (Exception f) {
+					if (getTile(tile.getX()+1, tile.getY()).isBox())
+						return getTile(tile.getX()+1, tile.getY());	
+				}
+			}
+		}
+		return null;
+	}
+	
+	// method that returns true if the player is in the air after a move
+	private boolean playerInAir() {
+		Tile playerBody = getPlayerBody();
+		Tile playerBox = getPlayerBox();
+		if (isTile(playerBody.getX(), playerBody.getY() + 1)) {
+			// needs two implementations depending on wheter the player is holding 
+			// a box or not.
+			if (playerBox == null) {
+				if (!getTile(playerBody.getX(), playerBody.getY() + 1).isCollisionBlock())
+					return true;
+				else
+					return false;
+			}
+			else {
+				// if player holds a box, we need to consider the possibility that
+				// the box tile could be the first that collides.
+				if (getTile(playerBody.getX(), playerBody.getY() + 1).isCollisionBlock()
+						|| getTile(playerBox.getX(), playerBox.getY() + 1).isCollisionBlock())
+					return false;
+				else
+					return true;
+			}
+		}
+		else {
+			setGameOver();
+			return false;
+		}
+	}
+	
+	// checks if a move is valid, i.e, if the target tiles are all air (or in 
+	// an edge case, part of the playerModel)
 	private boolean isValidMove(int dx) {
 		List<Tile> targets;
 		if (isMovingUp(dx))
@@ -167,6 +180,8 @@ public class FindingAWay extends AbstractGame {
 		return true;
 	}
 	
+	// helper method that returns true if the player is intending to move "up" by
+	// checking the tile beside the playerBody in the inteded direction.
 	private boolean isMovingUp(int dx) {
 		if (isTile(getPlayerBody().getX() + dx, getPlayerBody().getY()) &&
 				getTile(getPlayerBody().getX() + dx, getPlayerBody().getY()).isCollisionBlock())
@@ -174,6 +189,8 @@ public class FindingAWay extends AbstractGame {
 		return false;	
 	}
 	
+	// helper method that returns a list of the target Tiles (mathing the order
+	// of the playerModel).
 	private List<Tile> getTargets(int dx, int dy) {
 		List<Tile> targets = new ArrayList<>();
 		
@@ -188,6 +205,8 @@ public class FindingAWay extends AbstractGame {
 		return targets;
 	}
 	
+	// helper method that returns a list of Characters (tile types) that matches
+	// the order of the playerModel.
 	private List<Character> getPlayerModelTypes() {
 		List<Character> types = new ArrayList<>();
 		for (Tile tile: getPlayerModel()) {
@@ -196,6 +215,7 @@ public class FindingAWay extends AbstractGame {
 		return types;
 	}
 	
+	// moves the player if a series of validations are true
 	private void move(int dx) {
 		if (isWon || isGameOver)
 			throw new IllegalStateException("Game finished");
@@ -230,6 +250,8 @@ public class FindingAWay extends AbstractGame {
 		playerFalling();
 	}
 	
+	// method that makes the player "fall" if the player is in the air after 
+	// interacting (dropping) a box or after a move.
 	private void playerFalling() {
 		List<Character> playerModelTypes;
 		List<Tile> targetPlayerModel;
@@ -249,6 +271,7 @@ public class FindingAWay extends AbstractGame {
 		}
 	}
 	
+	// method that returns true if the game is finished
 	private boolean checkIfFinished() {
 		for (Tile tile: playerModel) {
 			if (tile == getFinish())
@@ -257,14 +280,17 @@ public class FindingAWay extends AbstractGame {
 		return false;
 	}
 	
+	// moves left (dx = -1)
 	public void moveLeft() {
 		move(-1);
 	}
 	
+	// moves right (dx = 1)
 	public void moveRight() {
 		move(1);
 	}
 	
+	// setters and getters for isGameOver, isWon and boxPickedUp
 	public boolean isGameOver() {
 		return isGameOver;
 	}
