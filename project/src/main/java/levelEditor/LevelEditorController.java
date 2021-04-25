@@ -53,11 +53,13 @@ public class LevelEditorController {
 	
 	private Button lastButton;
 	
+	// sets a GameController to secure consistency and encapsulation
 	public void setGameController(GameController gameController) {
 		this.gameController = gameController;
 	}
 	
 	@FXML
+	// inits the level editor
 	private void initialize() {
 		initLevelEditor();
 		drawBoard();
@@ -65,6 +67,8 @@ public class LevelEditorController {
 		lastButton = setAirButton;
 	}
 	
+	// inits the LevelEditorGame. It also adds an observerer to the tiles (panes)
+	// so that they become clickable
 	private void initLevelEditor() {
 		editor = new LevelEditorGame(new Level(12, 14));
 		
@@ -93,6 +97,8 @@ public class LevelEditorController {
 			}
 		}
 	}
+	
+	// different handlers
 	
 	@FXML
 	public void handleSetAir() {
@@ -147,12 +153,14 @@ public class LevelEditorController {
 	}
 	
 	@FXML
+	// resets the editor, unlike the GameController, this resets the level completly
 	public void handleReset() {
 		editor = new LevelEditorGame(new Level(12, 14));
 		drawBoard();
 	}
 	
 	@FXML
+	// load to LevelEditorGame
 	public void handleLoad() throws FileNotFoundException {
 		LevelEditorGame newEditor = (LevelEditorGame) sm.loadGame(textField.getText().strip(), true);
 		if (newEditor != null) {
@@ -169,6 +177,7 @@ public class LevelEditorController {
 	}
 	
 	@FXML
+	// saves the level
 	public void handleSave() {
 		try {
 			sm.saveGame(textField.getText().strip(), editor);
@@ -183,11 +192,13 @@ public class LevelEditorController {
 	}
 	
 	@FXML
+	// returns to the Game scene
 	public void handleDone() {
 		gameController.exitLevelEditor();
 	}
 	
-	public void drawBoard() {
+	// draws the board
+	private void drawBoard() {
 		for (int y = 0; y < editor.getHeight(); y++) {
 			for (int x = 0; x < editor.getWidth(); x++) {
 				board.getChildren().get(y*editor.getWidth() + x).setStyle(
@@ -197,6 +208,7 @@ public class LevelEditorController {
 		}
 	}
 	
+	// returns a string of the color code for a tile.
 	private String getTileColor(Tile tile) {
 		if (tile.isPlayer())
 			return "#741b47";
