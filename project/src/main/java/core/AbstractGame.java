@@ -60,7 +60,8 @@ public abstract class AbstractGame {
 		finish = null;
 	}
 	
-	// adds a playermodel to the board, and references it correctly to the list playerModel.
+	// adds a playermodel to the board, and references the tiles on the board
+	// correctly to the list playerModel.
 	public void addPlayer(int x, int y) {
 		if (playerModel == null) {
 			if (isTile(x, y) && isTile(x, y-1)) {
@@ -83,6 +84,7 @@ public abstract class AbstractGame {
 			throw new IllegalStateException("Already player on board, use remove player");
 	}
 	
+	// removes the playermodel if it exists.
 	public void removePlayer() {
 		if (playerModel == null)
 			throw new IllegalStateException("Can't remove player when it is non-existing");
@@ -92,10 +94,21 @@ public abstract class AbstractGame {
 		playerModel = null;
 	}
 	
+	// helper-method to validate if a tile exists on the board, it is protected
+	// such that subclasses can use it.
 	protected boolean isTile(int x, int y) {
 		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
 	}
 	
+	// Returns a copy of the playerModel if it exists. Returns null otherwise
+	public List<Tile> getPlayerModel() {
+		if (playerModel != null)
+			return new ArrayList<>(playerModel);
+		return null;
+	}
+	
+	// returns the playerhead (index 1 of playerModel). Throws a NullPointerException
+	// if playerModel is null, because you are trying to access an index of null.
 	public Tile getPlayerHead() {
 		if (playerModel == null)
 			throw new NullPointerException("Playermodel does not exist");
@@ -103,12 +116,16 @@ public abstract class AbstractGame {
 		
 	}
 	
+	// returns the playerbody (index 0). It is equivilant as to doing:
+	// getPlayerModel().get(0)
 	public Tile getPlayerBody() {
 		if (playerModel == null)
 			throw new NullPointerException("Playermodel does not exist");
 		return getPlayerModel().get(0);
 	}
 	
+	// returns the box the player is holding (if a box is picked up) otherwise 
+	// it returns null.
 	public Tile getPlayerBox() {
 		if (playerModel == null)
 			throw new NullPointerException("Playermodel does not exist");
@@ -117,12 +134,7 @@ public abstract class AbstractGame {
 		return null;
 	}
 	
-	public List<Tile> getPlayerModel() {
-		if (playerModel != null)
-			return new ArrayList<>(playerModel);
-		return null;
-	}
-	
+	// updates the level
 	public void updateLevel() {
 		level.update(board, playerModel, finish);
 	}
