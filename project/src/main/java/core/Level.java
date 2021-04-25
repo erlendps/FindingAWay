@@ -28,6 +28,7 @@ public class Level {
 		}
 	}
 	
+	// getters
 	public int getHeight() {
 		return height;
 	}
@@ -48,6 +49,7 @@ public class Level {
 		return finish;
 	}
 	
+	// helper method that returns true if the tile is a part of the board
 	private boolean isTile(Tile tile) {
 		if (tile == null)
 			return false;
@@ -56,12 +58,14 @@ public class Level {
 				&& tile.getY() >= 0 && tile.getY() < getHeight();
 	}
 	
+	// updates the level with the given parameters.
 	public void update(Tile[][] board, List<Tile> playerModel, Tile finish) {
 		setBoard(board);
 		setPlayerModel(playerModel);
 		setFinish(finish);
 	}
 	
+	// sets the board with some validation.
 	private void setBoard(Tile[][] board) {
 		if (board != null && (board.length == getHeight() && board[0].length == getWidth()))
 			this.board = board;
@@ -70,6 +74,7 @@ public class Level {
 					+ "input board must be the same as this.board");
 	}
 	
+	// sets the playerModel, with quite extensive validation
 	private void setPlayerModel(List<Tile> playerModel) {
 		if (playerModel != null) {
 			int countPlayerTile = 0;
@@ -101,6 +106,7 @@ public class Level {
 		this.playerModel = playerModel;
 	}
 	
+	// sets the finish tile
 	private void setFinish(Tile finish) {
 		if (!isTile(finish) && finish != null)
 			throw new IllegalArgumentException("This is not a valid tile, either it is null"

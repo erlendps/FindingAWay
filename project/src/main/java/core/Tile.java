@@ -29,6 +29,7 @@ public class Tile {
 		setType(type);
 	}
 	
+	// getters
 	public int getX() {
 		return x;
 	}
@@ -40,7 +41,8 @@ public class Tile {
 	public char getType() {
 		return type;
 	}
-
+	
+	// generalized setter, when its now known which type the user would set.
 	public void setType(char type) {
 		if (isValidType(type)) {
 			this.type = type;
@@ -50,6 +52,7 @@ public class Tile {
 		}
 	}
 	
+	// setters
 	public void setAir() {
 		setType(' ');
 	}
@@ -70,6 +73,7 @@ public class Tile {
 	public void setPlayer() {
 		setType('o');
 	}
+	
 	
 	public boolean isAir() {
 		return getType() == ' ';
@@ -95,7 +99,7 @@ public class Tile {
 		return isGround() || isBox();
 	}
 	
-	protected boolean isValidType(char type) {
+	private boolean isValidType(char type) {
 		char[] validTypes = {' ', '#', '*', 'B', 'o'};
 		boolean contains = false;
 		for (char t: validTypes) {
