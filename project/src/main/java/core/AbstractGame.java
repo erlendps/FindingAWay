@@ -12,6 +12,7 @@ public abstract class AbstractGame {
 	protected Level level;
 	
 	
+	// getters
 	public int getHeight() {
 		return height;
 	}
@@ -37,6 +38,7 @@ public abstract class AbstractGame {
 		return finish;
 	}
 	
+	// adds a finish tile to the board, and gives it the correct reference.
 	public void addFinish(int x, int y) {
 		if (finish != null)
 			throw new IllegalStateException("Cant have more than one goal, use remove finish");
@@ -50,6 +52,7 @@ public abstract class AbstractGame {
 			throw new IllegalArgumentException("Invalid placement of finish tile");	
 	}
 	
+	// removes the finish tile if it exists.
 	public void removeFinish() {
 		if (finish == null)
 			throw new IllegalStateException("Cant remove finish tile when it does not exist");
@@ -57,19 +60,24 @@ public abstract class AbstractGame {
 		finish = null;
 	}
 	
+	// adds a playermodel to the board, and references it correctly to the list playerModel.
 	public void addPlayer(int x, int y) {
-		if (playerModel == null && isTile(x, y)) {
-			if (getTile(x, y).isAir() && getTile(x, y-1).isAir()
-					&& getTile(x, y+1).isCollisionBlock()) {
-				getTile(x,y).setPlayer();
-				getTile(x,y-1).setPlayer();
-				playerModel = new ArrayList<>();
-				playerModel.add(0, getTile(x, y));   // player body
-				playerModel.add(1, getTile(x, y-1)); // player head
+		if (playerModel == null) {
+			if (isTile(x, y) && isTile(x, y-1)) {
+				if (getTile(x, y).isAir() && getTile(x, y-1).isAir()
+						&& getTile(x, y+1).isCollisionBlock()) {
+					getTile(x,y).setPlayer();
+					getTile(x,y-1).setPlayer();
+					playerModel = new ArrayList<>();
+					playerModel.add(0, getTile(x, y));   // player body
+					playerModel.add(1, getTile(x, y-1)); // player head
+				}
+				else
+					throw new IllegalArgumentException("Invalid placement of player model.\n"
+							+ "The tile under the player must be an collision block");
 			}
 			else
-				throw new IllegalArgumentException("Invalid placement of player model.\n"
-						+ "The tile under the player must be an collision block");
+				throw new IllegalArgumentException("One of the tiles is not a tile on the board");
 		}
 		else
 			throw new IllegalStateException("Already player on board, use remove player");
