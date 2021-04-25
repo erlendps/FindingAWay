@@ -38,6 +38,7 @@ public class FindingAWay extends AbstractGame {
 				boxTile.setAir();
 				getTile(boxTile.getX(), targetY).setBox();
 				playerModel.add(2, getTile(boxTile.getX(), targetY));
+				updateLevel();
 			}
 			else {
 				playerModel.remove(2);
@@ -47,6 +48,7 @@ public class FindingAWay extends AbstractGame {
 					boxTile.setAir();
 					boxTile = getTile(boxTile.getX(), boxTile.getY() + 1);
 					boxTile.setBox();
+					updateLevel();
 				}
 
 			}
@@ -144,6 +146,7 @@ public class FindingAWay extends AbstractGame {
 		if (checkIfFinished())
 			setIsWon();
 		
+		updateLevel();
 		playerFalling();
 		}
 	
@@ -223,6 +226,7 @@ public class FindingAWay extends AbstractGame {
 		if (checkIfFinished())
 			setIsWon();
 		
+		updateLevel();
 		playerFalling();
 	}
 	
@@ -241,6 +245,7 @@ public class FindingAWay extends AbstractGame {
 			playerModel = targetPlayerModel;
 			if (checkIfFinished())
 				setIsWon();
+			updateLevel();
 		}
 	}
 	
