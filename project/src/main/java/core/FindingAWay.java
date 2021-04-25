@@ -223,21 +223,6 @@ public class FindingAWay extends AbstractGame {
 		if (checkIfFinished())
 			setIsWon();
 		
-//		while(playerInAir()) {
-//			playerModelTypes = getPlayerModelTypes();
-//			for (Tile tile: playerModel) {
-//				if (!tile.isGround())
-//					tile.setAir();
-//			}
-//			targetPlayerModel = getTargets(0, 1);
-//			for (int i = 0; i < playerModel.size(); i++) {
-//				if (!targetPlayerModel.get(i).isGround())
-//					targetPlayerModel.get(i).setType(playerModelTypes.get(i));
-//			}
-//			playerModel = targetPlayerModel;
-//			if (checkIfFinished())
-//				isWon = true;
-//		}
 		playerFalling();
 	}
 	
@@ -275,27 +260,6 @@ public class FindingAWay extends AbstractGame {
 		move(1);
 	}
 	
-	
-	@Override
-	public String toString() {
-		String out = "";
-		for (int y = 0; y < getHeight(); y++) {
-			for (int x = 0; x < getWidth(); x++) {
-				if (getTile(x, y) == getPlayerHead())
-					out += 'p';
-				else
-					out += getTile(x, y);
-			}
-			out += "\n";
-		}
-		if (isGameOver())
-			out += "\n\nGame Over";
-		else if (isWon())
-			out += "\n\nGame won";
-		
-		return out;
-	}
-	
 	public boolean isGameOver() {
 		return isGameOver;
 	}
@@ -322,6 +286,26 @@ public class FindingAWay extends AbstractGame {
 		else
 			boxPickedUp = true;
 	}
+	
+	@Override
+	public String toString() {
+		String out = "";
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
+				if (getTile(x, y) == getPlayerHead())
+					out += 'p';
+				else
+					out += getTile(x, y);
+			}
+			out += "\n";
+		}
+		if (isGameOver())
+			out += "\n\nGame Over";
+		else if (isWon())
+			out += "\n\nGame won";
+		
+		return out;
+	}
 
 	
 
@@ -343,11 +327,7 @@ public class FindingAWay extends AbstractGame {
 			for (int x = 5; x < game.getWidth()-1; x++) {
 				game.getTile(x, y).setGround();}}
 		game.updateLevel();
-		game.addPlayer(2, 6);
-		StorageManager sm = new StorageManager();
-		FindingAWay g2 = (FindingAWay) sm.loadGame("gaming.txt", false);
-		LevelEditorGame editor = (LevelEditorGame) sm.loadGame("gaming.txt", true);
-		System.out.println(editor);
+		game.addPlayer(2, 6);		
 	}
 }
 

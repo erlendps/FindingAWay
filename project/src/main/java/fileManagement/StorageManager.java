@@ -21,6 +21,10 @@ public class StorageManager implements IFileManagement {
 	public static final String SAVES_FOLDER = Path.of(System.getProperty("user.home"),
 			"tdt4100", "FindingAWay", "saves").toString();
 
+	/*
+	 * Loads an AbstractGame. The boolean decides if it should cast to FindingAWay
+	 * (false) or LevelEditorGame (true).
+	 */
 	@Override
 	public AbstractGame loadGame(String fileName, boolean loadEditor) throws FileNotFoundException {
 		Path path = Path.of(StorageManager.SAVES_FOLDER, fileName);
@@ -72,7 +76,10 @@ public class StorageManager implements IFileManagement {
 			}
 		}
 	}
-
+	
+	/*
+	 * Saves a AbstractGame with the given file name
+	 */
 	@Override
 	public void saveGame(String fileName, AbstractGame game) throws FileNotFoundException {
 		if (!checkFileName(fileName)) 
@@ -122,7 +129,9 @@ public class StorageManager implements IFileManagement {
 
 	
 	/*
-	 * Hjelpemetode som sjekker om filen allerede er laget
+	 * Helper method that creates directories if not created already.
+	 * I got it from lecturer Stein L. Tomassen in 
+	 * foreksempel/src/main/java/w10/household_complete/storage/StorageManager.java
 	 */
 	private boolean createNewFile(Path file) {
 		try {
@@ -144,6 +153,10 @@ public class StorageManager implements IFileManagement {
 		return false;
 	}
 	
+	
+	/*
+	 * Helper method that validates the name of the file
+	 */
 	private boolean checkFileName(String fileName) {
 		int indexOfSplitter = fileName.lastIndexOf('.');
 		if (indexOfSplitter == -1) {
