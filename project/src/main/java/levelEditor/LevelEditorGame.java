@@ -24,10 +24,12 @@ public class LevelEditorGame extends AbstractGame {
 			throw new IllegalArgumentException("Level cant be null");
 	}
 	
+	// getters for the editortype
 	public char getEditorType() {
 		return editorType;
 	}
 	
+	// sets the editorType to the given argument, if its valid
 	public void setType(char type) {
 		List<Character> validTypes = new ArrayList<>(Arrays.asList(' ', '#', 'B', '*', 'o'));
 		if (!validTypes.contains(type))
@@ -35,6 +37,8 @@ public class LevelEditorGame extends AbstractGame {
 		this.editorType = type;
 	}
 	
+	// sets the tile to the same type as editorType. Has validation to secure 
+	// that the user is not overwriting the playerModel or finish tiles. 
 	public void setTile(int x, int y) {
 		if (!isTile(x, y))
 			throw new IllegalArgumentException(String.format("X=%d, Y=%d. This is not a tile.", x, y));
@@ -64,8 +68,4 @@ public class LevelEditorGame extends AbstractGame {
 		}
 		return out;
 	}
-	
-	
-
-
 }
