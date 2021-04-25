@@ -86,7 +86,7 @@ public class StorageManager implements IFileManagement {
 			throw new IllegalArgumentException("Not a valid file name");
 		
 		if (!ValidLevelHelper.checkIfValidLevel(game)) {
-			throw new IllegalArgumentException("Not a valid level");
+			throw new IllegalArgumentException("Not a valid level to save");
 		}
 		
 		Path path = Path.of(StorageManager.SAVES_FOLDER, fileName);
@@ -124,7 +124,8 @@ public class StorageManager implements IFileManagement {
 			}
 		}
 		else
-			throw new FileNotFoundException();
+			throw new FileNotFoundException("Something went wrong when trying to "
+					+ "save the game");
 	}
 
 	

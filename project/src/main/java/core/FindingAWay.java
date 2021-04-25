@@ -92,7 +92,7 @@ public class FindingAWay extends AbstractGame {
 	
 	private Tile getBoxTileNearPlayer() {
 		if (getPlayerModel() == null)
-			throw new NullPointerException("Playermodel does not exist.");
+			throw new NullPointerException("Playermodel does not exist, add it first");
 		List<Tile> iteratorList = new ArrayList<>();
 		iteratorList.addAll(playerModel);
 		Collections.reverse(iteratorList); 	
@@ -198,7 +198,7 @@ public class FindingAWay extends AbstractGame {
 			throw new IllegalStateException("Game finished");
 		
 		if (!ValidLevelHelper.checkIfValidLevel(this))
-			throw new IllegalStateException("Something is not right");
+			throw new IllegalStateException("Something is not right, the level is not valid.");
 		
 		List<Tile> targetPlayerModel;
 		if (!isValidMove(dx))

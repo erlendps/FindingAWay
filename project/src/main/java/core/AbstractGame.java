@@ -39,20 +39,20 @@ public abstract class AbstractGame {
 	
 	public void addFinish(int x, int y) {
 		if (finish != null)
-			throw new IllegalStateException("Cant have more than one goal");
+			throw new IllegalStateException("Cant have more than one goal, use remove finish");
 		if (!isTile(x, y))
-			throw new IllegalArgumentException("Not a valid tile");
+			throw new IllegalArgumentException("Not a valid tile to place finish on");
 		if (getTile(x, y).isAir()) {
 			getTile(x, y).setFinish();
 			finish = getTile(x, y);
 		}
 		else
-			throw new IllegalArgumentException("Invalid placement");	
+			throw new IllegalArgumentException("Invalid placement of finish tile");	
 	}
 	
 	public void removeFinish() {
 		if (finish == null)
-			throw new IllegalStateException("Cant remove something that does not exist");
+			throw new IllegalStateException("Cant remove finish tile when it does not exist");
 		finish.setAir();
 		finish = null;
 	}
@@ -68,10 +68,11 @@ public abstract class AbstractGame {
 				playerModel.add(1, getTile(x, y-1)); // player head
 			}
 			else
-				throw new IllegalArgumentException("Invalid placement of player model");
+				throw new IllegalArgumentException("Invalid placement of player model.\n"
+						+ "The tile under the player must be an collision block");
 		}
 		else
-			throw new IllegalStateException("Already player on board.");
+			throw new IllegalStateException("Already player on board, use remove player");
 	}
 	
 	public void removePlayer() {

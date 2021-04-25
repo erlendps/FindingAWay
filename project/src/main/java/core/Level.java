@@ -66,7 +66,8 @@ public class Level {
 		if (board != null && (board.length == getHeight() && board[0].length == getWidth()))
 			this.board = board;
 		else 
-			throw new IllegalArgumentException("Not a valid board");
+			throw new IllegalArgumentException("Not a valid board, the dimensions for the "
+					+ "input board must be the same as this.board");
 	}
 	
 	private void setPlayerModel(List<Tile> playerModel) {
@@ -75,7 +76,8 @@ public class Level {
 			int countBox = 0;
 			for (Tile tile: playerModel) {
 				if (!isTile(tile))
-					throw new IllegalArgumentException("this is not a valid tile");
+					throw new IllegalArgumentException("The playerModel contains a tile "
+							+ "that is not an existing Tile in the board");
 				switch (tile.getType()) {
 				case 'o':
 					countPlayerTile++;
@@ -101,7 +103,8 @@ public class Level {
 	
 	private void setFinish(Tile finish) {
 		if (!isTile(finish) && finish != null)
-			throw new IllegalArgumentException("This is not a valid tile");
+			throw new IllegalArgumentException("This is not a valid tile, either it is null"
+					+ " or it is not an exxisting tile on the board.");
 		this.finish = finish;
 	}
 	

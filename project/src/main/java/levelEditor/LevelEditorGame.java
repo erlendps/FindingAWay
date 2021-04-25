@@ -37,7 +37,7 @@ public class LevelEditorGame extends AbstractGame {
 	
 	public void setTile(int x, int y) {
 		if (!isTile(x, y))
-			throw new IllegalArgumentException("This is not a tile.");
+			throw new IllegalArgumentException(String.format("X=%d, Y=%d. This is not a tile.", x, y));
 		if (getTile(x, y).isPlayer())
 			throw new IllegalStateException("Cant overwrite playerModel, use removePlayer insted.");
 		if (getTile(x, y).isFinish())
