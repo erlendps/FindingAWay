@@ -107,6 +107,14 @@ public abstract class AbstractGame {
 		return null;
 	}
 	
+	// returns the playerbody (index 0). It is equivilant as to doing:
+	// getPlayerModel().get(0)
+	public Tile getPlayerBody() {
+		if (playerModel == null)
+			throw new NullPointerException("Playermodel does not exist");
+		return getPlayerModel().get(0);
+	}
+	
 	// returns the playerhead (index 1 of playerModel). Throws a NullPointerException
 	// if playerModel is null, because you are trying to access an index of null.
 	public Tile getPlayerHead() {
@@ -114,14 +122,6 @@ public abstract class AbstractGame {
 			throw new NullPointerException("Playermodel does not exist");
 		return getPlayerModel().get(1);
 		
-	}
-	
-	// returns the playerbody (index 0). It is equivilant as to doing:
-	// getPlayerModel().get(0)
-	public Tile getPlayerBody() {
-		if (playerModel == null)
-			throw new NullPointerException("Playermodel does not exist");
-		return getPlayerModel().get(0);
 	}
 	
 	// returns the box the player is holding (if a box is picked up) otherwise 
