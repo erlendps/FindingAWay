@@ -31,7 +31,7 @@ public class FindingAWay extends AbstractGame {
 		Tile boxTile = getBoxTileNearPlayer();
 
 		if (boxTile != null) {
-			if (!boxPickedUp) {
+			if (!checkIfBoxPickedUp()) {
 				int dy = boxTile.getY() - getPlayerHead().getY();
 				int targetY = boxTile.getY() - dy;
 				boxTile.setAir();
@@ -60,7 +60,7 @@ public class FindingAWay extends AbstractGame {
 	
 	// method that swaps the side the box is on, if its a valid "move"
 	public void swapBoxSide() {
-		if (!boxPickedUp)
+		if (!checkIfBoxPickedUp())
 			throw new IllegalStateException("No box to swap side with.");
 		
 		if (getPlayerBox() == null)
@@ -97,7 +97,7 @@ public class FindingAWay extends AbstractGame {
 		if (getPlayerModel() == null)
 			throw new NullPointerException("Playermodel does not exist, add it first");
 		List<Tile> iteratorList = new ArrayList<>();
-		iteratorList.addAll(playerModel);
+		iteratorList.addAll(getPlayerModel());
 		Collections.reverse(iteratorList); 	
 		// reversing because if playerModel contains box-tile, box tile will be the index 0
 		// if not, we get the head as index 0, so the code then checks if a box is closest
@@ -174,7 +174,7 @@ public class FindingAWay extends AbstractGame {
 			return false;
 		
 		for (Tile tile: targets) {
-			if (!tile.isAir() && !playerModel.contains(tile) && !tile.isFinish())
+			if (!tile.isAir() && !getPlayerModel().contains(tile) && !tile.isFinish())
 				return false;
 		}
 		return true;
@@ -217,7 +217,7 @@ public class FindingAWay extends AbstractGame {
 	
 	// moves the player if a series of validations are true
 	private void move(int dx) {
-		if (isWon || isGameOver)
+		if (isWon() || isGameOver())
 			throw new IllegalStateException("Game finished");
 		
 		if (!ValidLevelHelper.checkIfValidLevel(this))
@@ -236,10 +236,10 @@ public class FindingAWay extends AbstractGame {
 			targetPlayerModel = getTargets(dx, 0);
 		
 		List<Character> playerModelTypes = getPlayerModelTypes();
-		for (Tile tile: playerModel) {
+		for (Tile tile: getPlayerModel()) {
 			tile.setAir();
 		}
-		for (int i = 0; i < playerModel.size(); i++) {
+		for (int i = 0; i < getPlayerModel().size(); i++) {
 			targetPlayerModel.get(i).setType(playerModelTypes.get(i));
 		}
 		playerModel = targetPlayerModel;
@@ -257,7 +257,7 @@ public class FindingAWay extends AbstractGame {
 		List<Tile> targetPlayerModel;
 		while(playerInAir()) {
 			playerModelTypes = getPlayerModelTypes();
-			for (Tile tile: playerModel) {
+			for (Tile tile: getPlayerModel()) {
 				tile.setAir();
 			}
 			targetPlayerModel = getTargets(0, 1);
@@ -273,7 +273,7 @@ public class FindingAWay extends AbstractGame {
 	
 	// method that returns true if the game is finished
 	private boolean checkIfFinished() {
-		for (Tile tile: playerModel) {
+		for (Tile tile: getPlayerModel()) {
 			if (tile == getFinish())
 				return true;
 		}
