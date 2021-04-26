@@ -71,8 +71,6 @@ public class FindingAWayTest {
 		assertEquals(8, game.getHeight());
 		assertEquals(10, game.getWidth());
 		
-		Level level = new Level(10, 12);
-		
 		assertEquals(game.board[6][2], game.getTile(2, 6));
 		
 		// test on a tile that does not exist
