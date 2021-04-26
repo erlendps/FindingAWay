@@ -12,3 +12,5 @@ Litt kode i kontroller-klassen er også litt likt, for eksempel hvordan man over
 Det er brukt 2 kontrollere og fxml-filer. Implentasjonen av dette er inspirert fra todo-list eksempelet. 
 
 Klassen FolderReaderHelper gjør ingenting for spillet og skal ikke være en del av prosjektet. Den var tidligere brukt som en del av prosjektet, men etter at jeg ble oppmerksom på at løsningen min for lagring og henting var ugyldig, falt denne klassen bort. Den ligger fortsatt i repoet grunnet jeg ikke vil slette den.
+
+For testene brukes 3 filer, invalid_tile.txt, invalid_playermodel.txt og invalid_width.txt for å teste filbehandling. For at testene skal kjøre riktig må appen åpnes først en gang, og deretter legge til filene i ~/tdt4100/FindingAWay/saves/
