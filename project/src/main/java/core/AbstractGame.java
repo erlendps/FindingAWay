@@ -88,7 +88,7 @@ public abstract class AbstractGame {
 	public void removePlayer() {
 		if (playerModel == null)
 			throw new IllegalStateException("Can't remove player when it is non-existing");
-		for (Tile tile: playerModel) {
+		for (Tile tile: getPlayerModel()) {
 			tile.setAir();
 		}
 		playerModel = null;
@@ -110,7 +110,7 @@ public abstract class AbstractGame {
 	// returns the playerbody (index 0). It is equivilant as to doing:
 	// getPlayerModel().get(0)
 	public Tile getPlayerBody() {
-		if (playerModel == null)
+		if (getPlayerModel() == null)
 			throw new NullPointerException("Playermodel does not exist");
 		return getPlayerModel().get(0);
 	}
@@ -118,7 +118,7 @@ public abstract class AbstractGame {
 	// returns the playerhead (index 1 of playerModel). Throws a NullPointerException
 	// if playerModel is null, because you are trying to access an index of null.
 	public Tile getPlayerHead() {
-		if (playerModel == null)
+		if (getPlayerModel() == null)
 			throw new NullPointerException("Playermodel does not exist");
 		return getPlayerModel().get(1);
 		
@@ -127,9 +127,9 @@ public abstract class AbstractGame {
 	// returns the box the player is holding (if a box is picked up) otherwise 
 	// it returns null.
 	public Tile getPlayerBox() {
-		if (playerModel == null)
+		if (getPlayerModel() == null)
 			throw new NullPointerException("Playermodel does not exist");
-		if (playerModel.size() > 2)
+		if (getPlayerModel().size() > 2)
 			return getPlayerModel().get(2);
 		return null;
 	}
